@@ -1,0 +1,26 @@
+{
+  "browsers": [
+    {
+      "os": "iOS",
+      "os_version": "16",
+      "device": "iPhone 14",
+      "browser": "Safari"
+    },
+    {
+      "os": "iOS", 
+      "os_version": "15",
+      "device": "iPhone 13",
+      "browser": "Safari"
+    }
+  ],
+  "run_settings": {
+    "timeout": 300,
+    "selenium_version": "4.0",
+    "command_executor": "https://hub-cloud.browserstack.com/wd/hub"
+  },
+  "capabilities": {
+    "project": "PlutoVets",
+    "build": "flutter-web-build",
+    "name": "iOS Testing"
+  }
+}
