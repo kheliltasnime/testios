@@ -19,21 +19,23 @@ jobs:
       with:
         flutter-version: '3.41.2'
 
-    # Vérification facultative : voir où on est et si pubspec.yaml existe
-    - name: List files (debug)
+    - name: Vérifier le contenu de plutovets_mobile
       run: ls -la plutovets_mobile/
 
     - name: Install dependencies
-      run: flutter pub get
-      working-directory: plutovets_mobile
+      run: |
+        cd plutovets_mobile
+        flutter pub get
 
     - name: Analyze code
-      run: flutter analyze
-      working-directory: plutovets_mobile
+      run: |
+        cd plutovets_mobile
+        flutter analyze
 
     - name: Run tests
-      run: flutter test
-      working-directory: plutovets_mobile
+      run: |
+        cd plutovets_mobile
+        flutter test
 
     - name: Setup Xcode
       uses: maxim-lobanov/setup-xcode@v1
@@ -41,12 +43,14 @@ jobs:
         xcode-version: latest-stable
 
     - name: Build iOS Simulator
-      run: flutter build ios --simulator
-      working-directory: plutovets_mobile
+      run: |
+        cd plutovets_mobile
+        flutter build ios --simulator
 
     - name: Build iOS (for testing, no codesign)
-      run: flutter build ios --no-codesign
-      working-directory: plutovets_mobile
+      run: |
+        cd plutovets_mobile
+        flutter build ios --no-codesign
 
     - name: Upload iOS Build
       uses: actions/upload-artifact@v4
