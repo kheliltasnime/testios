@@ -19,22 +19,55 @@ jobs:
       with:
         flutter-version: '3.41.2'
 
-    - name: Vérifier le contenu de plutovets_mobile
-      run: ls -la plutovets_mobile/
+    # Diagnostic : affiche la structure complète et cherche pubspec.yaml
+    - name: Explorer la structure du dépôt
+      run: |
+        echo "=== Contenu de la racine ==="
+        ls -la
+        echo ""
+        echo "=== Recherche de pubspec.yaml ==="
+        find . -name "pubspec.yaml" -type f
+        echo ""
+        echo "=== Vérification du dossier plutovets_mobile ==="
+        if [ -d "plutovets_mobile" ]; then
+          ls -la plutovets_mobile/
+        else
+          echo "Le dossier plutovets_mobile n'existe pas à la racine !"
+        fi
 
+    # Installation des dépendances en se positionnant au bon endroit
     - name: Install dependencies
       run: |
-        cd plutovets_mobile
+        if [ -f "plutovets_mobile/pubspec.yaml" ]; then
+          cd plutovets_mobile
+        elif [ -f "pubspec.yaml" ]; then
+          cd .
+        else
+          echo "❌ pubspec.yaml introuvable"
+          exit 1
+        fi
         flutter pub get
 
     - name: Analyze code
       run: |
-        cd plutovets_mobile
+        if [ -f "plutovets_mobile/pubspec.yaml" ]; then
+          cd plutovets_mobile
+        elif [ -f "pubspec.yaml" ]; then
+          cd .
+        else
+          exit 1
+        fi
         flutter analyze
 
     - name: Run tests
       run: |
-        cd plutovets_mobile
+        if [ -f "plutovets_mobile/pubspec.yaml" ]; then
+          cd plutovets_mobile
+        elif [ -f "pubspec.yaml" ]; then
+          cd .
+        else
+          exit 1
+        fi
         flutter test
 
     - name: Setup Xcode
@@ -44,16 +77,30 @@ jobs:
 
     - name: Build iOS Simulator
       run: |
-        cd plutovets_mobile
+        if [ -f "plutovets_mobile/pubspec.yaml" ]; then
+          cd plutovets_mobile
+        elif [ -f "pubspec.yaml" ]; then
+          cd .
+        else
+          exit 1
+        fi
         flutter build ios --simulator
 
     - name: Build iOS (for testing, no codesign)
       run: |
-        cd plutovets_mobile
+        if [ -f "plutovets_mobile/pubspec.yaml" ]; then
+          cd plutovets_mobile
+        elif [ -f "pubspec.yaml" ]; then
+          cd .
+        else
+          exit 1
+        fi
         flutter build ios --no-codesign
 
     - name: Upload iOS Build
       uses: actions/upload-artifact@v4
       with:
         name: ios-build
+        # Si le projet est dans plutovets_mobile, ce chemin est correct.
+        # Sinon, il faudra l'ajuster après le diagnostic.
         path: plutovets_mobile/build/ios/iphoneos/Runner.app
