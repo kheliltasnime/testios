@@ -1,0 +1,35 @@
+name: iOS tests
+
+on:
+  push:
+    branches: [ main ]  # Runs when code is pushed to 'main'
+  pull_request:
+    branches: [ main ]  # Runs when a PR is opened to 'main'
+  workflow_dispatch:    # Allows you to run this workflow manually from the GitHub UI
+
+jobs:
+  test:
+    runs-on: macos-latest     # The secret ingredient: a macOS runner!
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      # This is the crucial step that launches the simulator
+      - name: Launch iOS Simulator
+        uses: futureware-tech/simulator-action@v4
+        with:
+          model: 'iPhone-14'   # You can change the model if needed
+
+      - name: Run Flutter tests
+        run: flutter test
+
+      - name: Run integration tests
+        run: flutter test integration_test
