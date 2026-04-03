@@ -11,7 +11,8 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMixin {
+class _SplashScreenState extends State<SplashScreen>
+    with TickerProviderStateMixin {
   late AnimationController _logoController;
   late AnimationController _textController;
   late Animation<double> _logoAnimation;
@@ -28,14 +29,12 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
       duration: const Duration(milliseconds: 800),
       vsync: this,
     );
-    _logoAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(parent: _logoController, curve: Curves.easeInOut));
-    _textAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(parent: _textController, curve: Curves.easeInOut));
+    _logoAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _logoController, curve: Curves.easeInOut),
+    );
+    _textAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _textController, curve: Curves.easeInOut),
+    );
     _startAnimation();
   }
 
@@ -136,6 +135,42 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
                 const SizedBox(height: 60),
               ],
             ),
+          ),
+        ),
+      ),
+    );
+  }
+                  return Opacity(
+                    opacity: _textAnimation.value,
+                    child: Transform.translate(
+                      offset: Offset(0, 20 * (1 - _textAnimation.value)),
+                      child: Column(
+                        children: [
+                          Text(
+                            'PlutoVets',
+                            style: Theme.of(context).textTheme.displayMedium
+                                ?.copyWith(
+                                  color: AppTheme.onPrimary,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Soins vétérinaires pour vos compagnons',
+                            style: Theme.of(context).textTheme.bodyLarge
+                                ?.copyWith(
+                                  color: AppTheme.onPrimary.withOpacity(0.9),
+                                ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+              const Expanded(flex: 1, child: SizedBox()),
+            ],
           ),
         ),
       ),

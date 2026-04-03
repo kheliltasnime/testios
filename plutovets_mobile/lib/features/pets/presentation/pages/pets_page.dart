@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:google_fonts/google_fonts.dart';
 import 'dart:convert';
 import '../../../../core/router.dart';
 import '../../../../core/theme.dart';
@@ -49,18 +50,18 @@ class _PetsScreenState extends State<PetsScreen> {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         setState(() {
-          _userPets = List<Map<String, dynamic>>.from(data['pets'] ?? []);
+          _userPets = List<Map<String, dynamic>>.from(data['pets']);
           _isLoading = false;
         });
       } else {
         setState(() {
-          _error = 'Erreur lors du chargement des animaux';
+          _error = 'Erreur de chargement';
           _isLoading = false;
         });
       }
     } catch (e) {
       setState(() {
-        _error = 'Erreur: $e';
+        _error = 'Erreur réseau';
         _isLoading = false;
       });
     }
@@ -69,168 +70,423 @@ class _PetsScreenState extends State<PetsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.background,
-      appBar: AppBar(
-        title: const Text('Mes Animaux'),
-        backgroundColor: AppTheme.primaryColor,
-        foregroundColor: AppTheme.onPrimary,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.add),
-            onPressed: () {
-              context.go(AppRouter.addPet);
-            },
+      body: Container(
+        decoration: const BoxDecoration(gradient: AppTheme.loginGradient),
+        child: SafeArea(
+          child: Column(
+            children: [
+              // Header
+              Container(
+                padding: const EdgeInsets.all(20),
+                child: Row(
+                  children: [
+                    IconButton(
+                      onPressed: () => context.go('/dashboard'),
+                      icon: Icon(Icons.arrow_back, color: Colors.white),
+                    ),
+                    Expanded(
+                      child: Text(
+                        'Mes Animaux',
+                        style: GoogleFonts.poppins(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () => context.go('/dashboard'),
+                      icon: Icon(Icons.home, color: Colors.white),
+                    ),
+                  ],
+                ),
+              ),
+
+              // Content
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    children: [
+                      // Stats Card
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              blurRadius: 20,
+                              offset: const Offset(0, 10),
+                            ),
+                          ],
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Total',
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 14,
+                                    color: AppTheme.textSecondary,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  '${_userPets.length} animal${_userPets.length > 1 ? 'x' : ''}',
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.bold,
+                                    color: AppTheme.primaryColor,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Container(
+                              width: 60,
+                              height: 60,
+                              decoration: BoxDecoration(
+                                color: AppTheme.primaryColor.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                              child: Icon(
+                                Icons.pets,
+                                size: 30,
+                                color: AppTheme.primaryColor,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      const SizedBox(height: 24),
+
+                      // Add Pet Button
+                      SizedBox(
+                        width: double.infinity,
+                        height: 50,
+                        child: ElevatedButton(
+                          onPressed: () => context.go('/pets/add'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppTheme.primaryColor,
+                            foregroundColor: Colors.white,
+                            elevation: 0,
+                            shadowColor: Colors.transparent,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.add),
+                              const SizedBox(width: 8),
+                              Text(
+                                'Ajouter un animal',
+                                style: GoogleFonts.poppins(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 24),
+
+                      // Pets List
+                      if (_isLoading)
+                        Container(
+                          padding: const EdgeInsets.all(40),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              color: AppTheme.primaryColor,
+                            ),
+                          ),
+                        )
+                      else if (_error != null)
+                        Container(
+                          padding: const EdgeInsets.all(40),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Center(
+                            child: Column(
+                              children: [
+                                Icon(
+                                  Icons.error_outline,
+                                  size: 48,
+                                  color: AppTheme.error,
+                                ),
+                                const SizedBox(height: 16),
+                                Text(
+                                  _error!,
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 16,
+                                    color: AppTheme.error,
+                                  ),
+                                ),
+                                const SizedBox(height: 16),
+                                ElevatedButton(
+                                  onPressed: _loadUserPets,
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: AppTheme.primaryColor,
+                                    foregroundColor: Colors.white,
+                                  ),
+                                  child: const Text('Réessayer'),
+                                ),
+                              ],
+                            ),
+                          ),
+                        )
+                      else if (_userPets.isEmpty)
+                        Container(
+                          padding: const EdgeInsets.all(40),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Center(
+                            child: Column(
+                              children: [
+                                Icon(
+                                  Icons.pets_outlined,
+                                  size: 64,
+                                  color: AppTheme.textSecondary,
+                                ),
+                                const SizedBox(height: 16),
+                                Text(
+                                  'Aucun animal enregistré',
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 18,
+                                    color: AppTheme.textSecondary,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  'Ajoutez votre premier animal pour commencer',
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 14,
+                                    color: AppTheme.textSecondary,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        )
+                      else
+                        Column(
+                          children: _userPets.map((pet) {
+                            return _buildPetCard(pet);
+                          }).toList(),
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
-      body: _buildBody(),
     );
   }
 
-  Widget _buildBody() {
-    if (_isLoading) {
-      return Center(
-        child: CircularProgressIndicator(color: AppTheme.primaryColor),
-      );
-    }
-
-    if (_error != null) {
-      return Center(
+  Widget _buildPetCard(Map<String, dynamic> pet) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.error, size: 64, color: AppTheme.error),
-            const SizedBox(height: 16),
-            Text(
-              _error!,
-              style: Theme.of(context).textTheme.headlineMedium,
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: _loadUserPets,
-              child: const Text('Réessayer'),
-            ),
-          ],
-        ),
-      );
-    }
-
-    if (_userPets.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.pets, size: 64, color: AppTheme.primaryColor),
-            const SizedBox(height: 16),
-            Text(
-              'Vous n\'avez pas encore d\'animal',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Ajoutez votre premier animal pour commencer',
-              style: Theme.of(
-                context,
-              ).textTheme.bodyMedium?.copyWith(color: AppTheme.textSecondary),
-            ),
-            const SizedBox(height: 24),
-            ElevatedButton.icon(
-              onPressed: () {
-                context.go(AppRouter.addPet);
-              },
-              icon: const Icon(Icons.add),
-              label: const Text('Ajouter un animal'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppTheme.primaryColor,
-                foregroundColor: AppTheme.onPrimary,
-              ),
-            ),
-          ],
-        ),
-      );
-    }
-
-    return RefreshIndicator(
-      onRefresh: _loadUserPets,
-      child: ListView.builder(
-        padding: const EdgeInsets.all(16),
-        itemCount: _userPets.length,
-        itemBuilder: (context, index) {
-          final pet = _userPets[index];
-          return Container(
-            margin: const EdgeInsets.only(bottom: 16),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
-                  blurRadius: 10,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: ListTile(
-              contentPadding: const EdgeInsets.all(16),
-              leading: Container(
-                width: 60,
-                height: 60,
-                decoration: BoxDecoration(
-                  color: AppTheme.primaryColor.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(30),
-                ),
-                child: Icon(Icons.pets, color: AppTheme.primaryColor, size: 30),
-              ),
-              title: Text(
-                pet['name'] ?? 'Inconnu',
-                style: Theme.of(
-                  context,
-                ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
-              ),
-              subtitle: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 4),
-                  Text(
-                    'Espèce: ${pet['species'] ?? 'Non spécifié'}',
-                    style: Theme.of(context).textTheme.bodyMedium,
+            Row(
+              children: [
+                // Pet Avatar
+                Container(
+                  width: 60,
+                  height: 60,
+                  decoration: BoxDecoration(
+                    color: _getSpeciesColor(pet['species']).withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(30),
                   ),
-                  const SizedBox(height: 2),
-                  Text(
-                    'Poids: ${pet['weight']?.toString() ?? '?'} kg',
-                    style: Theme.of(context).textTheme.bodyMedium,
+                  child: Icon(
+                    _getSpeciesIcon(pet['species']),
+                    size: 30,
+                    color: _getSpeciesColor(pet['species']),
                   ),
-                  if (pet['specialNeeds'] != null &&
-                      pet['specialNeeds'].isNotEmpty) ...[
-                    const SizedBox(height: 2),
-                    Text(
-                      'Notes: ${pet['specialNeeds']}',
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: AppTheme.textSecondary,
+                ),
+                const SizedBox(width: 16),
+
+                // Pet Info
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        pet['name'] ?? 'Nom inconnu',
+                        style: GoogleFonts.poppins(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: AppTheme.textPrimary,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        '${pet['species'] ?? 'Espèce inconnue'} • ${pet['breed'] ?? 'Race inconnue'}',
+                        style: GoogleFonts.poppins(
+                          fontSize: 14,
+                          color: AppTheme.textSecondary,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        '${pet['age'] ?? '?'} ans • ${pet['weight'] ?? '?'} kg',
+                        style: GoogleFonts.poppins(
+                          fontSize: 14,
+                          color: AppTheme.textSecondary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                // Action Button
+                PopupMenuButton<String>(
+                  icon: Icon(Icons.more_vert, color: AppTheme.textSecondary),
+                  onSelected: (value) {
+                    if (value == 'view') {
+                      // Navigate to pet details
+                    } else if (value == 'edit') {
+                      // Navigate to edit pet
+                    } else if (value == 'delete') {
+                      // Show delete confirmation
+                    }
+                  },
+                  itemBuilder: (context) => [
+                    PopupMenuItem(
+                      value: 'view',
+                      child: Row(
+                        children: [
+                          Icon(Icons.visibility, color: AppTheme.textSecondary),
+                          const SizedBox(width: 8),
+                          Text('Voir'),
+                        ],
+                      ),
+                    ),
+                    PopupMenuItem(
+                      value: 'edit',
+                      child: Row(
+                        children: [
+                          Icon(Icons.edit, color: AppTheme.textSecondary),
+                          const SizedBox(width: 8),
+                          Text('Modifier'),
+                        ],
+                      ),
+                    ),
+                    PopupMenuItem(
+                      value: 'delete',
+                      child: Row(
+                        children: [
+                          Icon(Icons.delete, color: AppTheme.error),
+                          const SizedBox(width: 8),
+                          Text('Supprimer'),
+                        ],
                       ),
                     ),
                   ],
-                ],
-              ),
-              trailing: Icon(
-                Icons.chevron_right,
-                color: AppTheme.textSecondary,
-              ),
-              onTap: () {
-                // TODO: Naviguer vers les détails de l'animal
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      'Détails de ${pet['name']} bientôt disponibles!',
-                    ),
-                  ),
-                );
-              },
+                ),
+              ],
             ),
-          );
-        },
+
+            // Pet Details
+            if (pet['specialNeeds'] != null &&
+                pet['specialNeeds'].toString().isNotEmpty)
+              Container(
+                margin: const EdgeInsets.only(top: 16),
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: AppTheme.inputBackground,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.medical_services,
+                      color: AppTheme.primaryColor,
+                      size: 20,
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        pet['specialNeeds'],
+                        style: GoogleFonts.poppins(
+                          fontSize: 14,
+                          color: AppTheme.textSecondary,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+          ],
+        ),
       ),
     );
+  }
+
+  Color _getSpeciesColor(String? species) {
+    switch (species?.toLowerCase()) {
+      case 'chien':
+        return AppTheme.petDog;
+      case 'chat':
+        return AppTheme.petCat;
+      case 'lapin':
+        return AppTheme.petRabbit;
+      case 'oiseau':
+        return AppTheme.petBird;
+      case 'rongeur':
+        return AppTheme.petRodent;
+      default:
+        return AppTheme.primaryColor;
+    }
+  }
+
+  IconData _getSpeciesIcon(String? species) {
+    switch (species?.toLowerCase()) {
+      case 'chien':
+        return Icons.pets;
+      case 'chat':
+        return Icons.cruelty_free;
+      case 'lapin':
+        return Icons.catching_pokemon;
+      case 'oiseau':
+        return Icons.flight;
+      case 'rongeur':
+        return Icons.pest_control_rodent;
+      default:
+        return Icons.pets;
+    }
   }
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../core/widgets/app_page_scaffold.dart';
-import '../../../../core/widgets/app_placeholder_state.dart';
+import 'package:google_fonts/google_fonts.dart';
+import '../../../../core/theme.dart';
 import '../../../../core/router.dart';
 import '../../data/booking_service.dart';
 import '../../data/models/booking_models.dart';
@@ -48,7 +48,7 @@ class _BookingsScreenState extends State<BookingsScreen> {
           e.toString().contains('Session expirée')) {
         Future.delayed(const Duration(seconds: 2), () {
           if (mounted) {
-            context.go(AppRouter.login);
+            context.go('/auth/login');
           }
         });
       }
@@ -57,133 +57,426 @@ class _BookingsScreenState extends State<BookingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return AppPageScaffold(title: 'Mes Rendez-vous', child: _buildBody());
-  }
+    return Scaffold(
+      body: Container(
+        decoration: const BoxDecoration(gradient: AppTheme.loginGradient),
+        child: SafeArea(
+          child: Column(
+            children: [
+              // Header
+              Container(
+                padding: const EdgeInsets.all(20),
+                child: Row(
+                  children: [
+                    IconButton(
+                      onPressed: () => context.go('/dashboard'),
+                      icon: Icon(Icons.arrow_back, color: Colors.white),
+                    ),
+                    Expanded(
+                      child: Text(
+                        'Mes Réservations',
+                        style: GoogleFonts.poppins(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () => context.go('/dashboard'),
+                      icon: Icon(Icons.home, color: Colors.white),
+                    ),
+                  ],
+                ),
+              ),
 
-  Widget _buildBody() {
-    if (_isLoading) {
-      return const AppPlaceholderState(
-        icon: Icons.calendar_today,
-        title: 'Chargement...',
-        message: 'Récupération de vos rendez-vous',
-      );
-    }
+              // Content
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    children: [
+                      // Stats Card
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              blurRadius: 20,
+                              offset: const Offset(0, 10),
+                            ),
+                          ],
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Total',
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 14,
+                                    color: AppTheme.textSecondary,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  '${_bookings.length} réservation${_bookings.length > 1 ? 's' : ''}',
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.bold,
+                                    color: AppTheme.primaryColor,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Container(
+                              width: 60,
+                              height: 60,
+                              decoration: BoxDecoration(
+                                color: AppTheme.primaryColor.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                              child: Icon(
+                                Icons.calendar_month,
+                                size: 30,
+                                color: AppTheme.primaryColor,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
 
-    if (_error != null) {
-      return AppPlaceholderState(
-        icon: Icons.error_outline,
-        title: 'Erreur',
-        message: _error!,
-        actionLabel: 'Réessayer',
-        onAction: _loadBookings,
-      );
-    }
+                      const SizedBox(height: 24),
 
-    if (_bookings.isEmpty) {
-      return const AppPlaceholderState(
-        icon: Icons.event_available,
-        title: 'Aucun rendez-vous',
-        message: 'Vous n\'avez pas encore de rendez-vous programmés',
-      );
-    }
+                      // Add Booking Button
+                      SizedBox(
+                        width: double.infinity,
+                        height: 50,
+                        child: ElevatedButton(
+                          onPressed: () => context.go('/bookings/create'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppTheme.primaryColor,
+                            foregroundColor: Colors.white,
+                            elevation: 0,
+                            shadowColor: Colors.transparent,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.add),
+                              const SizedBox(width: 8),
+                              Text(
+                                'Nouvelle réservation',
+                                style: GoogleFonts.poppins(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
 
-    return ListView.builder(
-      padding: const EdgeInsets.all(16),
-      itemCount: _bookings.length,
-      itemBuilder: (context, index) {
-        final booking = _bookings[index];
-        return _BookingCard(booking: booking);
-      },
+                      const SizedBox(height: 24),
+
+                      // Bookings List
+                      if (_isLoading)
+                        Container(
+                          padding: const EdgeInsets.all(40),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              color: AppTheme.primaryColor,
+                            ),
+                          ),
+                        )
+                      else if (_error != null)
+                        Container(
+                          padding: const EdgeInsets.all(40),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Center(
+                            child: Column(
+                              children: [
+                                Icon(
+                                  Icons.error_outline,
+                                  size: 48,
+                                  color: AppTheme.error,
+                                ),
+                                const SizedBox(height: 16),
+                                Text(
+                                  _error!,
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 16,
+                                    color: AppTheme.error,
+                                  ),
+                                ),
+                                const SizedBox(height: 16),
+                                ElevatedButton(
+                                  onPressed: _loadBookings,
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: AppTheme.primaryColor,
+                                    foregroundColor: Colors.white,
+                                  ),
+                                  child: const Text('Réessayer'),
+                                ),
+                              ],
+                            ),
+                          ),
+                        )
+                      else if (_bookings.isEmpty)
+                        Container(
+                          padding: const EdgeInsets.all(40),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Center(
+                            child: Column(
+                              children: [
+                                Icon(
+                                  Icons.calendar_today_outlined,
+                                  size: 64,
+                                  color: AppTheme.textSecondary,
+                                ),
+                                const SizedBox(height: 16),
+                                Text(
+                                  'Aucune réservation',
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 18,
+                                    color: AppTheme.textSecondary,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  'Créez votre première réservation pour commencer',
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 14,
+                                    color: AppTheme.textSecondary,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        )
+                      else
+                        Column(
+                          children: _bookings.map((booking) {
+                            return _buildBookingCard(booking);
+                          }).toList(),
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
-}
 
-class _BookingCard extends StatelessWidget {
-  final Booking booking;
-
-  const _BookingCard({required this.booking});
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 12),
+  Widget _buildBookingCard(Booking booking) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(20),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
-                Icon(Icons.pets, color: Theme.of(context).primaryColor),
-                const SizedBox(width: 8),
+                // Service Icon
+                Container(
+                  width: 60,
+                  height: 60,
+                  decoration: BoxDecoration(
+                    color: AppTheme.primaryColor.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  child: Icon(
+                    Icons.medical_services,
+                    size: 30,
+                    color: AppTheme.primaryColor,
+                  ),
+                ),
+                const SizedBox(width: 16),
+
+                // Booking Info
                 Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        booking.serviceName ?? 'Service inconnu',
+                        style: GoogleFonts.poppins(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: AppTheme.textPrimary,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        booking.petName ?? 'Animal inconnu',
+                        style: GoogleFonts.poppins(
+                          fontSize: 14,
+                          color: AppTheme.textSecondary,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        _formatDate(booking.bookingDate),
+                        style: GoogleFonts.poppins(
+                          fontSize: 14,
+                          color: AppTheme.textSecondary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                // Status Badge
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
+                  decoration: BoxDecoration(
+                    color: _getStatusColor(booking.status).withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
                   child: Text(
-                    booking.serviceName ?? 'Service',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
+                    _getStatusText(booking.status),
+                    style: GoogleFonts.poppins(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: _getStatusColor(booking.status),
                     ),
                   ),
                 ),
-                _StatusChip(
-                  status: BookingStatus.values.firstWhere(
-                    (e) => e.name == booking.status,
-                    orElse: () => BookingStatus.pending,
-                  ),
-                ),
               ],
             ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                Icon(Icons.pets, size: 20, color: Colors.grey[600]),
-                const SizedBox(width: 8),
-                Text(
-                  booking.petName ?? 'Animal',
-                  style: Theme.of(context).textTheme.bodyMedium,
+
+            // Booking Details
+            if (booking.notes != null && booking.notes!.isNotEmpty)
+              Container(
+                margin: const EdgeInsets.only(top: 16),
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: AppTheme.inputBackground,
+                  borderRadius: BorderRadius.circular(12),
                 ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                Icon(Icons.calendar_today, size: 20, color: Colors.grey[600]),
-                const SizedBox(width: 8),
-                Text(
-                  _formatDate(booking.bookingDate),
-                  style: Theme.of(context).textTheme.bodyMedium,
+                child: Row(
+                  children: [
+                    Icon(Icons.note, color: AppTheme.primaryColor, size: 20),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        booking.notes!,
+                        style: GoogleFonts.poppins(
+                          fontSize: 14,
+                          color: AppTheme.textSecondary,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-            if (booking.location != BookingLocation.clinic) ...[
-              const SizedBox(height: 8),
-              Row(
-                children: [
-                  Icon(Icons.location_on, size: 20, color: Colors.grey[600]),
-                  const SizedBox(width: 8),
-                  Text(
-                    booking.location == BookingLocation.home
-                        ? 'À domicile'
-                        : 'En clinique',
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
-                ],
               ),
-            ],
-            if (booking.notes != null && booking.notes!.isNotEmpty) ...[
-              const SizedBox(height: 8),
-              Row(
+
+            // Action Buttons
+            Container(
+              margin: const EdgeInsets.only(top: 16),
+              child: Row(
                 children: [
-                  Icon(Icons.note, size: 20, color: Colors.grey[600]),
-                  const SizedBox(width: 8),
                   Expanded(
-                    child: Text(
-                      booking.notes!,
-                      style: Theme.of(context).textTheme.bodySmall,
+                    child: OutlinedButton(
+                      onPressed: () {
+                        // View booking details
+                      },
+                      style: OutlinedButton.styleFrom(
+                        side: BorderSide(color: AppTheme.primaryColor),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.visibility,
+                            size: 18,
+                            color: AppTheme.primaryColor,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            'Voir',
+                            style: GoogleFonts.poppins(
+                              fontSize: 14,
+                              color: AppTheme.primaryColor,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () {
+                        // Cancel booking
+                      },
+                      style: OutlinedButton.styleFrom(
+                        side: BorderSide(color: AppTheme.error),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.cancel, size: 18, color: AppTheme.error),
+                          const SizedBox(width: 8),
+                          Text(
+                            'Annuler',
+                            style: GoogleFonts.poppins(
+                              fontSize: 14,
+                              color: AppTheme.error,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],
               ),
-            ],
+            ),
           ],
         ),
       ),
@@ -191,46 +484,40 @@ class _BookingCard extends StatelessWidget {
   }
 
   String _formatDate(DateTime date) {
-    return '${date.day}/${date.month}/${date.year} à ${date.hour}:${date.minute.toString().padLeft(2, '0')}';
-  }
-}
-
-class _StatusChip extends StatelessWidget {
-  final BookingStatus status;
-
-  const _StatusChip({required this.status});
-
-  @override
-  Widget build(BuildContext context) {
-    Color color;
-    String label;
-
-    switch (status) {
-      case BookingStatus.pending:
-        color = Colors.orange;
-        label = 'En attente';
-        break;
-      case BookingStatus.confirmed:
-        color = Colors.green;
-        label = 'Confirmé';
-        break;
-      case BookingStatus.cancelled:
-        color = Colors.red;
-        label = 'Annulé';
-        break;
-      case BookingStatus.completed:
-        color = Colors.blue;
-        label = 'Terminé';
-        break;
+    try {
+      return '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year} à ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
+    } catch (e) {
+      return date.toString();
     }
+  }
 
-    return Chip(
-      label: Text(
-        label,
-        style: const TextStyle(color: Colors.white, fontSize: 12),
-      ),
-      backgroundColor: color,
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-    );
+  Color _getStatusColor(String status) {
+    switch (status.toLowerCase()) {
+      case 'confirmed':
+        return AppTheme.success;
+      case 'pending':
+        return AppTheme.warning;
+      case 'cancelled':
+        return AppTheme.error;
+      case 'completed':
+        return AppTheme.info;
+      default:
+        return AppTheme.textSecondary;
+    }
+  }
+
+  String _getStatusText(String status) {
+    switch (status.toLowerCase()) {
+      case 'confirmed':
+        return 'Confirmée';
+      case 'pending':
+        return 'En attente';
+      case 'cancelled':
+        return 'Annulée';
+      case 'completed':
+        return 'Terminée';
+      default:
+        return status;
+    }
   }
 }

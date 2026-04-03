@@ -2,38 +2,61 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
-  static const Color primaryColor = Color(0xFFFFADCF); // Rose pâle H=335°, S=100%, L=84%
+  static const Color primaryColor = Color(
+    0xFFFFADCF,
+  ); // rgb(255, 173, 207) - hsl(335, 100%, 84%)
   static const Color primaryVariant = Color(0xFFFF8BB8); // Rose plus foncé
-  static const Color secondaryColor = Color(0xFF040038); // Bleu nuit profond H=244°, S=100%, L=11%
-  static const Color secondaryVariant = Color(0xFF060050); // Bleu nuit légèrement plus clair
-  
+  static const Color secondaryColor = Color(
+    0xFF040038,
+  ); // rgb(4, 0, 56) - hsl(244, 100%, 11%)
+  static const Color secondaryVariant = Color(
+    0xFF060050,
+  ); // Bleu nuit légèrement plus clair
+
   static const Color surface = Color(0xFFFFFFFF);
   static const Color background = Color(0xFFFFF8FA); // Fond très rose pâle
   static const Color error = Color(0xFFD32F2F);
   static const Color warning = Color(0xFFFFA000);
   static const Color success = Color(0xFF388E3C);
   static const Color info = Color(0xFF1976D2);
-  
+
   static const Color onPrimary = Color(0xFFFFFFFF);
-  static const Color onSecondary = Color(0xFFFFFFFF); // Texte blanc sur bleu nuit
+  static const Color onSecondary = Color(
+    0xFFFFFFFF,
+  ); // Texte blanc sur bleu nuit
   static const Color onSurface = Color(0xFF000000);
   static const Color onBackground = Color(0xFF000000);
   static const Color onError = Color(0xFFFFFFFF);
-  
-  static const Color textPrimary = Color(0xFF040038); // Texte principal en bleu nuit
+
+  static const Color textPrimary = Color(
+    0xFF040038,
+  ); // Texte principal en bleu nuit
   static const Color textSecondary = Color(0xFF666666); // Texte secondaire gris
   static const Color textDisabled = Color(0xFFBDBDBD);
-  
+
   static const Color divider = Color(0xFFFFE0E8); // Diviseur rose pâle
   static const Color cardBackground = Color(0xFFFFFFFF);
-  static const Color inputBackground = Color(0xFFFFF0F4); // Fond input rose très pâle
-  
+  static const Color inputBackground = Color(
+    0xFFFFF0F4,
+  ); // Fond input rose très pâle
+
+  // Dégradé pour le fond de connexion
+  static const LinearGradient loginGradient = LinearGradient(
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+    colors: [
+      Color(0xFFFFADCF), // rgb(255, 173, 207) - hsl(335, 100%, 84%)
+      Color(0xFF040038), // rgb(4, 0, 56) - hsl(244, 100%, 11%)
+    ],
+    stops: [0.0, 1.0],
+  );
+
   static const Color petDog = Color(0xFF795548);
   static const Color petCat = Color(0xFF9E9E9E);
   static const Color petRabbit = Color(0xFF8D6E63);
   static const Color petBird = Color(0xFF0288D1);
   static const Color petRodent = Color(0xFF689F38);
-  
+
   static const Color bookingPending = Color(0xFFFFA000);
   static const Color bookingConfirmed = Color(0xFF388E3C);
   static const Color bookingCancelled = Color(0xFFD32F2F);
@@ -198,22 +221,17 @@ class AppTheme {
           borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(color: error, width: 2),
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        hintStyle: GoogleFonts.poppins(
-          color: textSecondary,
-          fontSize: 14,
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 12,
         ),
-        labelStyle: GoogleFonts.poppins(
-          color: textSecondary,
-          fontSize: 14,
-        ),
+        hintStyle: GoogleFonts.poppins(color: textSecondary, fontSize: 14),
+        labelStyle: GoogleFonts.poppins(color: textSecondary, fontSize: 14),
       ),
       cardTheme: CardThemeData(
         color: cardBackground,
         elevation: 2,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         margin: const EdgeInsets.all(8),
       ),
       dividerTheme: const DividerThemeData(
@@ -231,10 +249,7 @@ class AppTheme {
           fontWeight: FontWeight.w600,
           color: textPrimary,
         ),
-        iconTheme: const IconThemeData(
-          color: textPrimary,
-          size: 24,
-        ),
+        iconTheme: const IconThemeData(color: textPrimary, size: 24),
       ),
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
         backgroundColor: surface,
@@ -255,18 +270,13 @@ class AppTheme {
         backgroundColor: inputBackground,
         selectedColor: primaryColor.withOpacity(0.2),
         disabledColor: textDisabled.withOpacity(0.2),
-        labelStyle: GoogleFonts.poppins(
-          color: textPrimary,
-          fontSize: 12,
-        ),
+        labelStyle: GoogleFonts.poppins(color: textPrimary, fontSize: 12),
         secondaryLabelStyle: GoogleFonts.poppins(
           color: primaryColor,
           fontSize: 12,
         ),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
       progressIndicatorTheme: const ProgressIndicatorThemeData(
         color: primaryColor,
@@ -275,13 +285,8 @@ class AppTheme {
       ),
       snackBarTheme: SnackBarThemeData(
         backgroundColor: textPrimary,
-        contentTextStyle: GoogleFonts.poppins(
-          color: onSurface,
-          fontSize: 14,
-        ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
+        contentTextStyle: GoogleFonts.poppins(color: onSurface, fontSize: 14),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         behavior: SnackBarBehavior.floating,
         elevation: 4,
       ),

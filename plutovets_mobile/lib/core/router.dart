@@ -24,25 +24,25 @@ class AppRouter {
   static const String login = 'login';
   static const String register = 'register';
   static const String forgotPassword = '/auth/forgot-password';
-  
+
   static const String dashboard = '/dashboard';
   static const String pets = '/pets';
   static const String petDetails = ':petId';
   static const String addPet = 'add';
   static const String editPet = ':petId/edit';
-  
+
   static const String bookings = '/bookings';
   static const String bookingDetails = ':bookingId';
   static const String createBooking = 'create';
   static const String editBooking = ':bookingId/edit';
-  
+
   static const String profile = '/profile';
   static const String notifications = '/notifications';
   static const String settings = '/settings';
   static const String about = '/about';
 
   static final GoRouter router = GoRouter(
-    initialLocation: splash,
+    initialLocation: dashboard,
     debugLogDiagnostics: true,
     routes: [
       GoRoute(
@@ -80,32 +80,26 @@ class AppRouter {
       GoRoute(
         path: dashboard,
         name: 'dashboard',
-        builder: (context, state) => const MainNavigation(
-          child: DashboardScreen(),
-        ),
+        builder: (context, state) =>
+            const MainNavigation(child: DashboardScreen()),
       ),
       GoRoute(
         path: pets,
         name: 'pets',
-        builder: (context, state) => const MainNavigation(
-          child: PetsScreen(),
-        ),
+        builder: (context, state) => const MainNavigation(child: PetsScreen()),
         routes: [
           GoRoute(
             path: 'add',
             name: 'add-pet',
-            builder: (context, state) => const MainNavigation(
-              child: AddPetScreen(),
-            ),
+            builder: (context, state) =>
+                const MainNavigation(child: AddPetScreen()),
           ),
           GoRoute(
             path: ':petId',
             name: 'pet-details',
             builder: (context, state) {
               final petId = state.pathParameters['petId']!;
-              return MainNavigation(
-                child: PetDetailsScreen(petId: petId),
-              );
+              return MainNavigation(child: PetDetailsScreen(petId: petId));
             },
           ),
           GoRoute(
@@ -113,9 +107,7 @@ class AppRouter {
             name: 'edit-pet',
             builder: (context, state) {
               final petId = state.pathParameters['petId']!;
-              return MainNavigation(
-                child: AddPetScreen(petId: petId),
-              );
+              return MainNavigation(child: AddPetScreen(petId: petId));
             },
           ),
         ],
@@ -123,9 +115,8 @@ class AppRouter {
       GoRoute(
         path: bookings,
         name: 'bookings',
-        builder: (context, state) => const MainNavigation(
-          child: BookingsScreen(),
-        ),
+        builder: (context, state) =>
+            const MainNavigation(child: BookingsScreen()),
         routes: [
           GoRoute(
             path: 'create',
@@ -133,10 +124,7 @@ class AppRouter {
             builder: (context, state) {
               final petId = state.uri.queryParameters['petId'];
               final serviceId = state.uri.queryParameters['serviceId'];
-              return CreateBookingScreen(
-                petId: petId,
-                serviceId: serviceId,
-              );
+              return CreateBookingScreen(petId: petId, serviceId: serviceId);
             },
           ),
           GoRoute(
@@ -164,16 +152,14 @@ class AppRouter {
       GoRoute(
         path: profile,
         name: 'profile',
-        builder: (context, state) => const MainNavigation(
-          child: ProfileScreen(),
-        ),
+        builder: (context, state) =>
+            const MainNavigation(child: ProfileScreen()),
       ),
       GoRoute(
         path: notifications,
         name: 'notifications',
-        builder: (context, state) => const MainNavigation(
-          child: NotificationsScreen(),
-        ),
+        builder: (context, state) =>
+            const MainNavigation(child: NotificationsScreen()),
       ),
     ],
     errorBuilder: (context, state) => Scaffold(
@@ -181,11 +167,7 @@ class AppRouter {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(
-              Icons.error_outline,
-              size: 64,
-              color: Colors.red,
-            ),
+            const Icon(Icons.error_outline, size: 64, color: Colors.red),
             const SizedBox(height: 16),
             Text(
               'Page non trouvée',
@@ -248,11 +230,15 @@ class AppRouter {
     context.go('/bookings/$bookingId');
   }
 
-  static void navigateToCreateBooking(BuildContext context, {String? petId, String? serviceId}) {
+  static void navigateToCreateBooking(
+    BuildContext context, {
+    String? petId,
+    String? serviceId,
+  }) {
     final queryParams = <String, String>{};
     if (petId != null) queryParams['petId'] = petId;
     if (serviceId != null) queryParams['serviceId'] = serviceId;
-    
+
     context.go('/bookings/create', extra: queryParams);
   }
 

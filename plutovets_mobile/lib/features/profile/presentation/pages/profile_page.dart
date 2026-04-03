@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:google_fonts/google_fonts.dart';
 import 'dart:convert';
 import '../../../../core/router.dart';
 import '../../../../core/theme.dart';
@@ -49,32 +50,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
       if (token != null && userString != null) {
         final user = jsonDecode(userString);
-        print('Loading user data: $user');
         setState(() {
           _userData = user;
+          _isLoading = false;
           _firstNameController.text = user['firstName'] ?? '';
           _lastNameController.text = user['lastName'] ?? '';
           _emailController.text = user['email'] ?? '';
           _phoneController.text = user['phone'] ?? '';
-          _isLoading = false;
         });
-        print(
-          'User data loaded: ${_userData!['firstName']} ${_userData!['lastName']}',
-        );
       } else {
         setState(() {
           _isLoading = false;
         });
       }
     } catch (e) {
-      print('Error loading user data: $e');
       setState(() {
         _isLoading = false;
       });
     }
   }
 
-  Future<void> _updateProfile() async {
+  Future<void> _saveProfile() async {
     if (!_formKey.currentState!.validate()) return;
 
     setState(() {
@@ -104,13 +100,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
       if (response.statusCode == 200) {
         final updatedUser = jsonDecode(response.body);
-
-        // Mettre à jour les données locales
-        await prefs.setString(
-          AppConstants.storageUserKey,
-          jsonEncode(updatedUser),
-        );
-
+        
+        // Update local storage
+        await prefs.setString(AppConstants.storageUserKey, jsonEncode(updatedUser));
+        
         setState(() {
           _userData = updatedUser;
           _isEditing = false;
@@ -119,14 +112,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Profil mis à jour avec succès!'),
+            SnackBar(
+              content: Text('Profil mis à jour avec succès'),
               backgroundColor: AppTheme.success,
             ),
           );
         }
       } else {
-        throw Exception('Échec de la mise à jour');
+        throw Exception('Erreur lors de la mise à jour');
       }
     } catch (e) {
       setState(() {
@@ -136,7 +129,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Erreur: ${e.toString()}'),
+            content: Text('Erreur: ${e.toString().replaceFirst('Exception: ', '')}'),
             backgroundColor: AppTheme.error,
           ),
         );
@@ -144,285 +137,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppTheme.background,
-      appBar: AppBar(
-        title: Text(_isEditing ? 'Modifier le profil' : 'Profil'),
-        backgroundColor: AppTheme.primaryColor,
-        foregroundColor: AppTheme.onPrimary,
-        actions: [
-          if (!_isEditing)
-            IconButton(
-              icon: const Icon(Icons.edit),
-              onPressed: () {
-                setState(() {
-                  _isEditing = true;
-                });
-              },
-            )
-          else
-            IconButton(
-              icon: _isSaving
-                  ? const SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: AppTheme.onPrimary,
-                      ),
-                    )
-                  : const Icon(Icons.save),
-              onPressed: _isSaving ? null : _updateProfile,
-            ),
-        ],
-      ),
-      body: _buildBody(),
-    );
-  }
-
-  Widget _buildBody() {
-    if (_isLoading) {
-      return Center(
-        child: CircularProgressIndicator(color: AppTheme.primaryColor),
-      );
-    }
-
-    if (_userData == null) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.person_off, size: 64, color: AppTheme.textSecondary),
-            const SizedBox(height: 16),
-            Text(
-              'Aucune donnée utilisateur',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () => context.go(AppRouter.login),
-              child: const Text('Se connecter'),
-            ),
-          ],
-        ),
-      );
-    }
-
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Form(
-        key: _formKey,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Avatar et informations de base
-            Center(
-              child: Column(
-                children: [
-                  Container(
-                    width: 120,
-                    height: 120,
-                    decoration: BoxDecoration(
-                      color: AppTheme.primaryColor.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(60),
-                    ),
-                    child: Icon(
-                      Icons.person,
-                      size: 60,
-                      color: AppTheme.primaryColor,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    _userData != null &&
-                            _userData!['firstName'] != null &&
-                            _userData!['lastName'] != null
-                        ? '${_userData!['firstName']} ${_userData!['lastName']}'
-                        : 'Chargement...',
-                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    _userData != null
-                        ? (_userData!['email'] ?? '')
-                        : 'Chargement...',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: AppTheme.textSecondary,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 32),
-
-            // Formulaire d'informations
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Informations personnelles',
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-
-                    TextFormField(
-                      controller: _firstNameController,
-                      enabled: _isEditing,
-                      decoration: const InputDecoration(
-                        labelText: 'Prénom',
-                        prefixIcon: Icon(Icons.person),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return 'Le prénom est requis';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 16),
-
-                    TextFormField(
-                      controller: _lastNameController,
-                      enabled: _isEditing,
-                      decoration: const InputDecoration(
-                        labelText: 'Nom',
-                        prefixIcon: Icon(Icons.person),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return 'Le nom est requis';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 16),
-
-                    TextFormField(
-                      controller: _emailController,
-                      enabled: false, // L'email ne peut pas être modifié
-                      decoration: const InputDecoration(
-                        labelText: 'Email',
-                        prefixIcon: Icon(Icons.email),
-                        helperText: 'L\'email ne peut pas être modifié',
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-
-                    TextFormField(
-                      controller: _phoneController,
-                      enabled: _isEditing,
-                      decoration: const InputDecoration(
-                        labelText: 'Téléphone',
-                        prefixIcon: Icon(Icons.phone),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return 'Le téléphone est requis';
-                        }
-                        return null;
-                      },
-                    ),
-                  ],
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 24),
-
-            // Boutons d'action
-            if (_isEditing) ...[
-              Row(
-                children: [
-                  Expanded(
-                    child: OutlinedButton(
-                      onPressed: () {
-                        setState(() {
-                          _isEditing = false;
-                          _loadUserData(); // Recharger les données originales
-                        });
-                      },
-                      child: const Text('Annuler'),
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: _isSaving ? null : _updateProfile,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppTheme.primaryColor,
-                        foregroundColor: AppTheme.onPrimary,
-                      ),
-                      child: _isSaving
-                          ? const SizedBox(
-                              width: 20,
-                              height: 20,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                color: AppTheme.onPrimary,
-                              ),
-                            )
-                          : const Text('Enregistrer'),
-                    ),
-                  ),
-                ],
-              ),
-            ] else ...[
-              Card(
-                child: ListTile(
-                  leading: Icon(Icons.logout, color: AppTheme.error),
-                  title: const Text('Déconnexion'),
-                  subtitle: const Text('Se déconnecter de votre compte'),
-                  onTap: () => _showLogoutDialog(),
-                ),
-              ),
-            ],
-          ],
-        ),
-      ),
-    );
-  }
-
-  void _showLogoutDialog() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Déconnexion'),
-        content: const Text('Êtes-vous sûr de vouloir vous déconnecter?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Annuler'),
-          ),
-          TextButton(
-            onPressed: () async {
-              Navigator.of(context).pop();
-              await _logout();
-            },
-            style: TextButton.styleFrom(foregroundColor: AppTheme.error),
-            child: const Text('Déconnexion'),
-          ),
-        ],
-      ),
-    );
-  }
-
   Future<void> _logout() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      await prefs.remove(AppConstants.storageTokenKey);
-      await prefs.remove(AppConstants.storageUserKey);
-      await prefs.remove(AppConstants.storageRefreshTokenKey);
-
+      await prefs.clear();
+      
       if (mounted) {
         context.go('/auth/login');
       }
@@ -432,5 +151,368 @@ class _ProfileScreenState extends State<ProfileScreen> {
         context.go('/auth/login');
       }
     }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: AppTheme.loginGradient,
+        ),
+        child: SafeArea(
+          child: Column(
+            children: [
+              // Header
+              Container(
+                padding: const EdgeInsets.all(20),
+                child: Row(
+                  children: [
+                    IconButton(
+                      onPressed: () => context.go('/dashboard'),
+                      icon: Icon(Icons.arrow_back, color: Colors.white),
+                    ),
+                    Expanded(
+                      child: Text(
+                        'Mon Profil',
+                        style: GoogleFonts.poppins(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    if (!_isEditing)
+                      IconButton(
+                        onPressed: () => setState(() => _isEditing = true),
+                        icon: Icon(Icons.edit, color: Colors.white),
+                      ),
+                  ],
+                ),
+              ),
+              
+              // Content
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    children: [
+                      // Profile Card
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(24),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              blurRadius: 20,
+                              offset: const Offset(0, 10),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          children: [
+                            // Avatar
+                            Container(
+                              width: 100,
+                              height: 100,
+                              decoration: BoxDecoration(
+                                color: AppTheme.primaryColor.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(50),
+                              ),
+                              child: Icon(
+                                Icons.person,
+                                size: 50,
+                                color: AppTheme.primaryColor,
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            
+                            // Name
+                            Text(
+                              '${_userData?['firstName'] ?? ''} ${_userData?['lastName'] ?? ''}',
+                              style: GoogleFonts.poppins(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                color: AppTheme.textPrimary,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            
+                            // Email
+                            Text(
+                              _userData?['email'] ?? '',
+                              style: GoogleFonts.poppins(
+                                fontSize: 16,
+                                color: AppTheme.textSecondary,
+                              ),
+                            ),
+                            
+                            const SizedBox(height: 24),
+                            
+                            // Form
+                            Form(
+                              key: _formKey,
+                              child: Column(
+                                children: [
+                                  // First Name
+                                  TextFormField(
+                                    controller: _firstNameController,
+                                    enabled: _isEditing,
+                                    decoration: InputDecoration(
+                                      labelText: 'Prénom',
+                                      labelStyle: TextStyle(
+                                        color: AppTheme.textSecondary,
+                                        fontSize: 14,
+                                      ),
+                                      prefixIcon: Icon(
+                                        Icons.person_outline,
+                                        color: AppTheme.primaryColor,
+                                      ),
+                                      filled: true,
+                                      fillColor: _isEditing ? AppTheme.inputBackground : Colors.grey.withOpacity(0.1),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                        borderSide: BorderSide.none,
+                                      ),
+                                      enabledBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                        borderSide: BorderSide(
+                                          color: AppTheme.primaryColor.withOpacity(0.3),
+                                          width: 1,
+                                        ),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                        borderSide: BorderSide(
+                                          color: AppTheme.primaryColor,
+                                          width: 2,
+                                        ),
+                                      ),
+                                    ),
+                                    validator: (v) => (v == null || v.isEmpty) ? 'Prénom requis' : null,
+                                  ),
+                                  
+                                  const SizedBox(height: 16),
+                                  
+                                  // Last Name
+                                  TextFormField(
+                                    controller: _lastNameController,
+                                    enabled: _isEditing,
+                                    decoration: InputDecoration(
+                                      labelText: 'Nom',
+                                      labelStyle: TextStyle(
+                                        color: AppTheme.textSecondary,
+                                        fontSize: 14,
+                                      ),
+                                      prefixIcon: Icon(
+                                        Icons.person_outline,
+                                        color: AppTheme.primaryColor,
+                                      ),
+                                      filled: true,
+                                      fillColor: _isEditing ? AppTheme.inputBackground : Colors.grey.withOpacity(0.1),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                        borderSide: BorderSide.none,
+                                      ),
+                                      enabledBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                        borderSide: BorderSide(
+                                          color: AppTheme.primaryColor.withOpacity(0.3),
+                                          width: 1,
+                                        ),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                        borderSide: BorderSide(
+                                          color: AppTheme.primaryColor,
+                                          width: 2,
+                                        ),
+                                      ),
+                                    ),
+                                    validator: (v) => (v == null || v.isEmpty) ? 'Nom requis' : null,
+                                  ),
+                                  
+                                  const SizedBox(height: 16),
+                                  
+                                  // Email (read-only)
+                                  TextFormField(
+                                    controller: _emailController,
+                                    enabled: false,
+                                    decoration: InputDecoration(
+                                      labelText: 'Email',
+                                      labelStyle: TextStyle(
+                                        color: AppTheme.textSecondary,
+                                        fontSize: 14,
+                                      ),
+                                      prefixIcon: Icon(
+                                        Icons.email_outlined,
+                                        color: AppTheme.primaryColor,
+                                      ),
+                                      filled: true,
+                                      fillColor: Colors.grey.withOpacity(0.1),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                        borderSide: BorderSide.none,
+                                      ),
+                                    ),
+                                  ),
+                                  
+                                  const SizedBox(height: 16),
+                                  
+                                  // Phone
+                                  TextFormField(
+                                    controller: _phoneController,
+                                    enabled: _isEditing,
+                                    decoration: InputDecoration(
+                                      labelText: 'Téléphone',
+                                      labelStyle: TextStyle(
+                                        color: AppTheme.textSecondary,
+                                        fontSize: 14,
+                                      ),
+                                      prefixIcon: Icon(
+                                        Icons.phone_outlined,
+                                        color: AppTheme.primaryColor,
+                                      ),
+                                      filled: true,
+                                      fillColor: _isEditing ? AppTheme.inputBackground : Colors.grey.withOpacity(0.1),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                        borderSide: BorderSide.none,
+                                      ),
+                                      enabledBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                        borderSide: BorderSide(
+                                          color: AppTheme.primaryColor.withOpacity(0.3),
+                                          width: 1,
+                                        ),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                        borderSide: BorderSide(
+                                          color: AppTheme.primaryColor,
+                                          width: 2,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            
+                            const SizedBox(height: 24),
+                            
+                            // Action Buttons
+                            if (_isEditing)
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: ElevatedButton(
+                                      onPressed: _isSaving ? null : () => setState(() => _isEditing = false),
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.grey,
+                                        foregroundColor: Colors.white,
+                                        elevation: 0,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(12),
+                                        ),
+                                      ),
+                                      child: _isSaving
+                                          ? SizedBox(
+                                              width: 20,
+                                              height: 20,
+                                              child: CircularProgressIndicator(
+                                                strokeWidth: 2,
+                                                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                              ),
+                                            )
+                                          : Text(
+                                              'Annuler',
+                                              style: GoogleFonts.poppins(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 16),
+                                  Expanded(
+                                    child: ElevatedButton(
+                                      onPressed: _isSaving ? null : _saveProfile,
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: AppTheme.primaryColor,
+                                        foregroundColor: Colors.white,
+                                        elevation: 0,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(12),
+                                        ),
+                                      ),
+                                      child: _isSaving
+                                          ? SizedBox(
+                                              width: 20,
+                                              height: 20,
+                                              child: CircularProgressIndicator(
+                                                strokeWidth: 2,
+                                                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                              ),
+                                            )
+                                          : Text(
+                                              'Sauvegarder',
+                                              style: GoogleFonts.poppins(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                          ],
+                        ),
+                      ),
+                      
+                      const SizedBox(height: 24),
+                      
+                      // Logout Button
+                      SizedBox(
+                        width: double.infinity,
+                        height: 50,
+                        child: ElevatedButton(
+                          onPressed: _logout,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppTheme.error,
+                            foregroundColor: Colors.white,
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.logout),
+                              const SizedBox(width: 8),
+                              Text(
+                                'Se déconnecter',
+                                style: GoogleFonts.poppins(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
