@@ -1,40 +1,38 @@
 name: Flutter iOS CI
 
 on:
-  workflow_dispatch:    # pour lancer manuellement
+  workflow_dispatch:
   push:
-    branches: [ main, develop ]
+    branches: [ main ]
   pull_request:
     branches: [ main ]
 
 jobs:
-  build-and-test-ios:
+  build-ios:
     runs-on: macos-latest
+    
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: '3.16.0'   # Remplacez par votre version réelle
-
-      - name: Install dependencies
-        run: |
-          if [ -f "plutovets_mobile/pubspec.yaml" ]; then
-            cd plutovets_mobile
-          fi
-          flutter pub get
-
-      - name: Build IPA (no codesign)
-        run: |
-          if [ -f "plutovets_mobile/pubspec.yaml" ]; then
-            cd plutovets_mobile
-          fi
-          flutter build ipa --release --no-codesign
-
-      - name: Upload IPA artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: ios-ipa
-          path: plutovets_mobile/build/ios/ipa/*.ipa
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.41.2'
+        
+    - name: Install dependencies
+      run: |
+        cd plutovets_mobile
+        flutter pub get
+        
+    - name: Build iOS IPA
+      run: |
+        cd plutovets_mobile
+        flutter build ipa --release --no-codesign
+        
+    - name: Upload IPA artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: ios-ipa
+        path: plutovets_mobile/build/ios/ipa/Runner.ipa
+        retention-days: 30
