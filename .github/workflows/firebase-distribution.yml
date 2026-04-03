@@ -1,0 +1,38 @@
+name: Deploy to Firebase App Distribution
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  deploy:
+    runs-on: macos-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.41.2'
+        
+    - name: Install dependencies
+      run: |
+        cd plutovets_mobile
+        flutter pub get
+        
+    - name: Build iOS IPA
+      run: |
+        cd plutovets_mobile
+        flutter build ipa
+        
+    - name: Deploy to Firebase App Distribution
+      uses: wzieba/Firebase-Distribution-Github-Action@v1
+      with:
+        appId: ${{ secrets.FIREBASE_IOS_APP_ID }}
+        serviceCredentialsFile: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_FILE }}
+        groups: testers
+        file: plutovets_mobile/build/ios/ipa/Runner.ipa
+        releaseNotes: "New version ${{ github.ref_name }}"

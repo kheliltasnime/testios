@@ -1,0 +1,24 @@
+platforms:
+  - name: iOS
+    osVersion: "16.0"
+    deviceName: "iPhone 14"
+    browserName: "Safari"
+  - name: iOS
+    osVersion: "15.0"
+    deviceName: "iPhone 13"
+    browserName: "Safari"
+
+suites:
+  - name: "PlutoVets Tests"
+    platform: "iOS"
+    deviceName: "iPhone 14"
+    browserName: "Safari"
+    testFiles:
+      - "test/integration_test/app_test.dart"
+
+capabilities:
+  platformName: "iOS"
+  deviceName: "iPhone 14"
+  browserName: "Safari"
+  appiumVersion: "2.0"
+  automationName: "XCUITest"

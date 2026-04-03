@@ -1,0 +1,52 @@
+name: Flutter iOS Free Testing
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-ios-web:
+    runs-on: macos-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.41.2'
+        
+    - name: Install dependencies
+      run: |
+        cd plutovets_mobile
+        flutter pub get
+        
+    - name: Run tests
+      run: |
+        cd plutovets_mobile
+        flutter test
+        
+    - name: Build for iOS Simulator
+      run: |
+        cd plutovets_mobile
+        flutter build ios --simulator --release
+        
+    - name: Build Web Version
+      run: |
+        cd plutovets_mobile
+        flutter build web --release
+        
+    - name: Upload Web Build
+      uses: actions/upload-artifact@v4
+      with:
+        name: web-build
+        path: plutovets_mobile/build/web
+        
+    - name: Upload iOS Simulator Build
+      uses: actions/upload-artifact@v4
+      with:
+        name: ios-simulator-build
+        path: plutovets_mobile/build/ios/iphonesimulator

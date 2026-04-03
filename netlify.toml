@@ -1,0 +1,19 @@
+[build]
+  base = "plutovets_mobile/"
+  command = "flutter build web --release --web-renderer canvaskit"
+  publish = "build/web"
+
+[build.environment]
+  FLUTTER_VERSION = "3.41.2"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "SAMEORIGIN"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
