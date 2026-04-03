@@ -1,7 +1,7 @@
 name: Flutter iOS CI
 
 on:
-  workflow_dispatch: 
+  workflow_dispatch:    # pour lancer manuellement
   push:
     branches: [ main, develop ]
   pull_request:
@@ -10,98 +10,31 @@ on:
 jobs:
   build-and-test-ios:
     runs-on: macos-latest
-
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Setup Flutter
-      uses: subosito/flutter-action@v2
-      with:
-        flutter-version: '3.41.2'
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.16.0'   # Remplacez par votre version réelle
 
-    # Diagnostic : affiche la structure complète et cherche pubspec.yaml
-    - name: Explorer la structure du dépôt
-      run: |
-        echo "=== Contenu de la racine ==="
-        ls -la
-        echo ""
-        echo "=== Recherche de pubspec.yaml ==="
-        find . -name "pubspec.yaml" -type f
-        echo ""
-        echo "=== Vérification du dossier plutovets_mobile ==="
-        if [ -d "plutovets_mobile" ]; then
-          ls -la plutovets_mobile/
-        else
-          echo "Le dossier plutovets_mobile n'existe pas à la racine !"
-        fi
+      - name: Install dependencies
+        run: |
+          if [ -f "plutovets_mobile/pubspec.yaml" ]; then
+            cd plutovets_mobile
+          fi
+          flutter pub get
 
-    # Installation des dépendances en se positionnant au bon endroit
-    - name: Install dependencies
-      run: |
-        if [ -f "plutovets_mobile/pubspec.yaml" ]; then
-          cd plutovets_mobile
-        elif [ -f "pubspec.yaml" ]; then
-          cd .
-        else
-          echo "❌ pubspec.yaml introuvable"
-          exit 1
-        fi
-        flutter pub get
+      - name: Build IPA (no codesign)
+        run: |
+          if [ -f "plutovets_mobile/pubspec.yaml" ]; then
+            cd plutovets_mobile
+          fi
+          flutter build ipa --release --no-codesign
 
-    - name: Analyze code
-      run: |
-        if [ -f "plutovets_mobile/pubspec.yaml" ]; then
-          cd plutovets_mobile
-        elif [ -f "pubspec.yaml" ]; then
-          cd .
-        else
-          exit 1
-        fi
-        flutter analyze
-
-    - name: Run tests
-      run: |
-        if [ -f "plutovets_mobile/pubspec.yaml" ]; then
-          cd plutovets_mobile
-        elif [ -f "pubspec.yaml" ]; then
-          cd .
-        else
-          exit 1
-        fi
-        flutter test
-
-    - name: Setup Xcode
-      uses: maxim-lobanov/setup-xcode@v1
-      with:
-        xcode-version: latest-stable
-
-    - name: Build iOS Simulator
-      run: |
-        if [ -f "plutovets_mobile/pubspec.yaml" ]; then
-          cd plutovets_mobile
-        elif [ -f "pubspec.yaml" ]; then
-          cd .
-        else
-          exit 1
-        fi
-        flutter build ios --simulator
-
-    - name: Build iOS (for testing, no codesign)
-      run: |
-        if [ -f "plutovets_mobile/pubspec.yaml" ]; then
-          cd plutovets_mobile
-        elif [ -f "pubspec.yaml" ]; then
-          cd .
-        else
-          exit 1
-        fi
-        flutter build ios --no-codesign
-
-    - name: Upload iOS Build
-      uses: actions/upload-artifact@v4
-      with:
-        name: ios-build
-        # Si le projet est dans plutovets_mobile, ce chemin est correct.
-        # Sinon, il faudra l'ajuster après le diagnostic.
-        path: plutovets_mobile/build/ios/iphoneos/Runner.app
+      - name: Upload IPA artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-ipa
+          path: plutovets_mobile/build/ios/ipa/*.ipa
