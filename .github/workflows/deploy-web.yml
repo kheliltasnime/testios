@@ -34,7 +34,7 @@ jobs:
     - name: Build Flutter Web
       run: |
         cd plutovets_mobile
-        flutter build web --release --base-url "/testios/"
+        flutter build web --release --base-href "/testios/"
         
     - name: Setup Pages
       uses: actions/configure-pages@v4
