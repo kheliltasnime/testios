@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import 'core/theme.dart';
 import 'core/router.dart';
 import 'core/constants.dart';
+import 'core/firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
-  // TODO: Add Firebase initialization when ready
-  // await Firebase.initializeApp();
-  
-  // Suppression temporaire du BLoC pour éviter les erreurs de compilation
+
+  // Initialize Firebase with options
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
   runApp(const PlutoVetsApp());
 }
 

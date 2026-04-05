@@ -18,7 +18,10 @@ class AuthScreen extends StatelessWidget {
             children: [
               const Icon(Icons.pets, size: 72, color: AppTheme.primaryColor),
               const SizedBox(height: 16),
-              Text('PlutoVets', style: Theme.of(context).textTheme.headlineMedium),
+              Text(
+                'PlutoVets',
+                style: Theme.of(context).textTheme.headlineMedium,
+              ),
               const SizedBox(height: 32),
               SizedBox(
                 width: double.infinity,

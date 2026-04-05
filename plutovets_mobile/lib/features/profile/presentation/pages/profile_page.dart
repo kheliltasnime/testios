@@ -100,10 +100,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
       if (response.statusCode == 200) {
         final updatedUser = jsonDecode(response.body);
-        
+
         // Update local storage
-        await prefs.setString(AppConstants.storageUserKey, jsonEncode(updatedUser));
-        
+        await prefs.setString(
+          AppConstants.storageUserKey,
+          jsonEncode(updatedUser),
+        );
+
         setState(() {
           _userData = updatedUser;
           _isEditing = false;
@@ -113,7 +116,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Profil mis à jour avec succès'),
+              content: Text('Profile updated successfully'),
               backgroundColor: AppTheme.success,
             ),
           );
@@ -129,7 +132,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Erreur: ${e.toString().replaceFirst('Exception: ', '')}'),
+            content: Text(
+              'Error: ${e.toString().replaceFirst('Exception: ', '')}',
+            ),
             backgroundColor: AppTheme.error,
           ),
         );
@@ -141,7 +146,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.clear();
-      
+
       if (mounted) {
         context.go('/auth/login');
       }
@@ -157,9 +162,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: const BoxDecoration(
-          gradient: AppTheme.loginGradient,
-        ),
+        decoration: const BoxDecoration(gradient: AppTheme.loginGradient),
         child: SafeArea(
           child: Column(
             children: [
@@ -174,7 +177,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     Expanded(
                       child: Text(
-                        'Mon Profil',
+                        'My Profile',
                         style: GoogleFonts.poppins(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
@@ -190,7 +193,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ],
                 ),
               ),
-              
+
               // Content
               Expanded(
                 child: SingleChildScrollView(
@@ -229,7 +232,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               ),
                             ),
                             const SizedBox(height: 16),
-                            
+
                             // Name
                             Text(
                               '${_userData?['firstName'] ?? ''} ${_userData?['lastName'] ?? ''}',
@@ -240,7 +243,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               ),
                             ),
                             const SizedBox(height: 8),
-                            
+
                             // Email
                             Text(
                               _userData?['email'] ?? '',
@@ -249,9 +252,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 color: AppTheme.textSecondary,
                               ),
                             ),
-                            
+
                             const SizedBox(height: 24),
-                            
+
                             // Form
                             Form(
                               key: _formKey,
@@ -262,7 +265,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     controller: _firstNameController,
                                     enabled: _isEditing,
                                     decoration: InputDecoration(
-                                      labelText: 'Prénom',
+                                      labelText: 'First Name',
                                       labelStyle: TextStyle(
                                         color: AppTheme.textSecondary,
                                         fontSize: 14,
@@ -272,7 +275,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         color: AppTheme.primaryColor,
                                       ),
                                       filled: true,
-                                      fillColor: _isEditing ? AppTheme.inputBackground : Colors.grey.withOpacity(0.1),
+                                      fillColor: _isEditing
+                                          ? AppTheme.inputBackground
+                                          : Colors.grey.withOpacity(0.1),
                                       border: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(12),
                                         borderSide: BorderSide.none,
@@ -280,7 +285,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       enabledBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(12),
                                         borderSide: BorderSide(
-                                          color: AppTheme.primaryColor.withOpacity(0.3),
+                                          color: AppTheme.primaryColor
+                                              .withOpacity(0.3),
                                           width: 1,
                                         ),
                                       ),
@@ -292,17 +298,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         ),
                                       ),
                                     ),
-                                    validator: (v) => (v == null || v.isEmpty) ? 'Prénom requis' : null,
+                                    validator: (v) => (v == null || v.isEmpty)
+                                        ? 'Prénom requis'
+                                        : null,
                                   ),
-                                  
+
                                   const SizedBox(height: 16),
-                                  
+
                                   // Last Name
                                   TextFormField(
                                     controller: _lastNameController,
                                     enabled: _isEditing,
                                     decoration: InputDecoration(
-                                      labelText: 'Nom',
+                                      labelText: 'Last Name',
                                       labelStyle: TextStyle(
                                         color: AppTheme.textSecondary,
                                         fontSize: 14,
@@ -312,7 +320,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         color: AppTheme.primaryColor,
                                       ),
                                       filled: true,
-                                      fillColor: _isEditing ? AppTheme.inputBackground : Colors.grey.withOpacity(0.1),
+                                      fillColor: _isEditing
+                                          ? AppTheme.inputBackground
+                                          : Colors.grey.withOpacity(0.1),
                                       border: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(12),
                                         borderSide: BorderSide.none,
@@ -320,7 +330,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       enabledBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(12),
                                         borderSide: BorderSide(
-                                          color: AppTheme.primaryColor.withOpacity(0.3),
+                                          color: AppTheme.primaryColor
+                                              .withOpacity(0.3),
                                           width: 1,
                                         ),
                                       ),
@@ -332,11 +343,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         ),
                                       ),
                                     ),
-                                    validator: (v) => (v == null || v.isEmpty) ? 'Nom requis' : null,
+                                    validator: (v) => (v == null || v.isEmpty)
+                                        ? 'Nom requis'
+                                        : null,
                                   ),
-                                  
+
                                   const SizedBox(height: 16),
-                                  
+
                                   // Email (read-only)
                                   TextFormField(
                                     controller: _emailController,
@@ -359,15 +372,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       ),
                                     ),
                                   ),
-                                  
+
                                   const SizedBox(height: 16),
-                                  
+
                                   // Phone
                                   TextFormField(
                                     controller: _phoneController,
                                     enabled: _isEditing,
                                     decoration: InputDecoration(
-                                      labelText: 'Téléphone',
+                                      labelText: 'Phone',
                                       labelStyle: TextStyle(
                                         color: AppTheme.textSecondary,
                                         fontSize: 14,
@@ -377,7 +390,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         color: AppTheme.primaryColor,
                                       ),
                                       filled: true,
-                                      fillColor: _isEditing ? AppTheme.inputBackground : Colors.grey.withOpacity(0.1),
+                                      fillColor: _isEditing
+                                          ? AppTheme.inputBackground
+                                          : Colors.grey.withOpacity(0.1),
                                       border: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(12),
                                         borderSide: BorderSide.none,
@@ -385,7 +400,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       enabledBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(12),
                                         borderSide: BorderSide(
-                                          color: AppTheme.primaryColor.withOpacity(0.3),
+                                          color: AppTheme.primaryColor
+                                              .withOpacity(0.3),
                                           width: 1,
                                         ),
                                       ),
@@ -401,22 +417,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 ],
                               ),
                             ),
-                            
+
                             const SizedBox(height: 24),
-                            
+
                             // Action Buttons
                             if (_isEditing)
                               Row(
                                 children: [
                                   Expanded(
                                     child: ElevatedButton(
-                                      onPressed: _isSaving ? null : () => setState(() => _isEditing = false),
+                                      onPressed: _isSaving
+                                          ? null
+                                          : () => setState(
+                                              () => _isEditing = false,
+                                            ),
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: Colors.grey,
                                         foregroundColor: Colors.white,
                                         elevation: 0,
                                         shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(12),
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
                                         ),
                                       ),
                                       child: _isSaving
@@ -425,11 +447,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                               height: 20,
                                               child: CircularProgressIndicator(
                                                 strokeWidth: 2,
-                                                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                                valueColor:
+                                                    AlwaysStoppedAnimation<
+                                                      Color
+                                                    >(Colors.white),
                                               ),
                                             )
                                           : Text(
-                                              'Annuler',
+                                              'Cancel',
                                               style: GoogleFonts.poppins(
                                                 fontSize: 16,
                                                 fontWeight: FontWeight.w600,
@@ -440,13 +465,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   const SizedBox(width: 16),
                                   Expanded(
                                     child: ElevatedButton(
-                                      onPressed: _isSaving ? null : _saveProfile,
+                                      onPressed: _isSaving
+                                          ? null
+                                          : _saveProfile,
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: AppTheme.primaryColor,
                                         foregroundColor: Colors.white,
                                         elevation: 0,
                                         shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(12),
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
                                         ),
                                       ),
                                       child: _isSaving
@@ -455,11 +484,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                               height: 20,
                                               child: CircularProgressIndicator(
                                                 strokeWidth: 2,
-                                                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                                valueColor:
+                                                    AlwaysStoppedAnimation<
+                                                      Color
+                                                    >(Colors.white),
                                               ),
                                             )
                                           : Text(
-                                              'Sauvegarder',
+                                              'Save',
                                               style: GoogleFonts.poppins(
                                                 fontSize: 16,
                                                 fontWeight: FontWeight.w600,
@@ -472,9 +504,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ],
                         ),
                       ),
-                      
+
                       const SizedBox(height: 24),
-                      
+
                       // Logout Button
                       SizedBox(
                         width: double.infinity,
@@ -495,7 +527,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               Icon(Icons.logout),
                               const SizedBox(width: 8),
                               Text(
-                                'Se déconnecter',
+                                'Sign Out',
                                 style: GoogleFonts.poppins(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,

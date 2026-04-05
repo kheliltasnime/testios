@@ -86,15 +86,15 @@ class _MainNavigationState extends State<MainNavigation> {
               fontWeight: FontWeight.w400,
             ),
             items: const [
-              BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Accueil'),
-              BottomNavigationBarItem(icon: Icon(Icons.pets), label: 'Animaux'),
+              BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+              BottomNavigationBarItem(icon: Icon(Icons.pets), label: 'Pets'),
               BottomNavigationBarItem(
                 icon: Icon(Icons.calendar_today),
-                label: 'Rendez-vous',
+                label: 'Appointments',
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.person),
-                label: 'Profil',
+                label: 'Profile',
               ),
             ],
           ),

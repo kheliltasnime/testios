@@ -86,7 +86,7 @@ class _PetsScreenState extends State<PetsScreen> {
                     ),
                     Expanded(
                       child: Text(
-                        'Mes Animaux',
+                        'My Pets',
                         style: GoogleFonts.poppins(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
@@ -138,7 +138,7 @@ class _PetsScreenState extends State<PetsScreen> {
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
-                                  '${_userPets.length} animal${_userPets.length > 1 ? 'x' : ''}',
+                                  '${_userPets.length} pet${_userPets.length > 1 ? 's' : ''}',
                                   style: GoogleFonts.poppins(
                                     fontSize: 24,
                                     fontWeight: FontWeight.bold,
@@ -187,7 +187,7 @@ class _PetsScreenState extends State<PetsScreen> {
                               Icon(Icons.add),
                               const SizedBox(width: 8),
                               Text(
-                                'Ajouter un animal',
+                                'Add a pet',
                                 style: GoogleFonts.poppins(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
@@ -244,7 +244,7 @@ class _PetsScreenState extends State<PetsScreen> {
                                     backgroundColor: AppTheme.primaryColor,
                                     foregroundColor: Colors.white,
                                   ),
-                                  child: const Text('Réessayer'),
+                                  child: const Text('Retry'),
                                 ),
                               ],
                             ),
@@ -267,7 +267,7 @@ class _PetsScreenState extends State<PetsScreen> {
                                 ),
                                 const SizedBox(height: 16),
                                 Text(
-                                  'Aucun animal enregistré',
+                                  'No pets registered',
                                   style: GoogleFonts.poppins(
                                     fontSize: 18,
                                     color: AppTheme.textSecondary,
@@ -276,7 +276,7 @@ class _PetsScreenState extends State<PetsScreen> {
                                 ),
                                 const SizedBox(height: 8),
                                 Text(
-                                  'Ajoutez votre premier animal pour commencer',
+                                  'Add your first pet to get started',
                                   style: GoogleFonts.poppins(
                                     fontSize: 14,
                                     color: AppTheme.textSecondary,
@@ -345,7 +345,7 @@ class _PetsScreenState extends State<PetsScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        pet['name'] ?? 'Nom inconnu',
+                        pet['name'] ?? 'Unknown Name',
                         style: GoogleFonts.poppins(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -354,7 +354,7 @@ class _PetsScreenState extends State<PetsScreen> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        '${pet['species'] ?? 'Espèce inconnue'} • ${pet['breed'] ?? 'Race inconnue'}',
+                        '${pet['species'] ?? 'Unknown Species'} • ${pet['breed'] ?? 'Unknown Breed'}',
                         style: GoogleFonts.poppins(
                           fontSize: 14,
                           color: AppTheme.textSecondary,
@@ -362,7 +362,7 @@ class _PetsScreenState extends State<PetsScreen> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        '${pet['age'] ?? '?'} ans • ${pet['weight'] ?? '?'} kg',
+                        '${pet['age'] ?? '?'} years old • ${pet['weight'] ?? '?'} kg',
                         style: GoogleFonts.poppins(
                           fontSize: 14,
                           color: AppTheme.textSecondary,
@@ -391,7 +391,7 @@ class _PetsScreenState extends State<PetsScreen> {
                         children: [
                           Icon(Icons.visibility, color: AppTheme.textSecondary),
                           const SizedBox(width: 8),
-                          Text('Voir'),
+                          Text('View'),
                         ],
                       ),
                     ),
@@ -401,7 +401,7 @@ class _PetsScreenState extends State<PetsScreen> {
                         children: [
                           Icon(Icons.edit, color: AppTheme.textSecondary),
                           const SizedBox(width: 8),
-                          Text('Modifier'),
+                          Text('Edit'),
                         ],
                       ),
                     ),
@@ -411,7 +411,7 @@ class _PetsScreenState extends State<PetsScreen> {
                         children: [
                           Icon(Icons.delete, color: AppTheme.error),
                           const SizedBox(width: 8),
-                          Text('Supprimer'),
+                          Text('Delete'),
                         ],
                       ),
                     ),

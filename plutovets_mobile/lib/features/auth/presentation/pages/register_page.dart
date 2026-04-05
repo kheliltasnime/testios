@@ -114,7 +114,7 @@ class _RegisterScreenImprovedState extends State<RegisterScreenImproved> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Compte et animal crees avec succes'),
+          content: Text('Account and pet created successfully'),
           backgroundColor: AppTheme.success,
         ),
       );
@@ -132,16 +132,14 @@ class _RegisterScreenImprovedState extends State<RegisterScreenImproved> {
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: const Text('Email déjà utilisé'),
+              title: const Text('Email already in use'),
               content: const Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Cet email est déjà utilisé dans notre système.'),
+                  Text('This email is already used in our system.'),
                   SizedBox(height: 8),
-                  Text(
-                    'Veuillez utiliser un autre email pour créer votre compte.',
-                  ),
+                  Text('Please use another email to create your account.'),
                 ],
               ),
               actions: [
@@ -260,7 +258,7 @@ class _RegisterScreenImprovedState extends State<RegisterScreenImproved> {
 
                         // Titre principal
                         Text(
-                          'Créer un compte',
+                          'Create an account',
                           style: GoogleFonts.poppins(
                             fontSize: 32,
                             fontWeight: FontWeight.bold,
@@ -272,7 +270,7 @@ class _RegisterScreenImprovedState extends State<RegisterScreenImproved> {
 
                         // Slogan
                         Text(
-                          'Rejoignez notre communauté vétérinaire',
+                          'Join our veterinary community',
                           style: GoogleFonts.poppins(
                             fontSize: 16,
                             color: Colors.white.withOpacity(0.9),
@@ -305,7 +303,7 @@ class _RegisterScreenImprovedState extends State<RegisterScreenImproved> {
                           TextFormField(
                             controller: _firstName,
                             decoration: InputDecoration(
-                              labelText: 'Nom complet',
+                              labelText: 'Full Name',
                               labelStyle: TextStyle(
                                 color: AppTheme.textSecondary,
                                 fontSize: 14,
@@ -392,7 +390,7 @@ class _RegisterScreenImprovedState extends State<RegisterScreenImproved> {
                             controller: _phone,
                             keyboardType: TextInputType.phone,
                             decoration: InputDecoration(
-                              labelText: 'Téléphone',
+                              labelText: 'Phone',
                               labelStyle: TextStyle(
                                 color: AppTheme.textSecondary,
                                 fontSize: 14,
@@ -431,7 +429,7 @@ class _RegisterScreenImprovedState extends State<RegisterScreenImproved> {
                             controller: _password,
                             obscureText: _obscurePassword,
                             decoration: InputDecoration(
-                              labelText: 'Mot de passe',
+                              labelText: 'Password',
                               labelStyle: TextStyle(
                                 color: AppTheme.textSecondary,
                                 fontSize: 14,
@@ -487,7 +485,7 @@ class _RegisterScreenImprovedState extends State<RegisterScreenImproved> {
                             controller: _confirmPassword,
                             obscureText: _obscureConfirmPassword,
                             decoration: InputDecoration(
-                              labelText: 'Confirmer mot de passe',
+                              labelText: 'Confirm Password',
                               labelStyle: TextStyle(
                                 color: AppTheme.textSecondary,
                                 fontSize: 14,
@@ -555,7 +553,7 @@ class _RegisterScreenImprovedState extends State<RegisterScreenImproved> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Informations de votre animal',
+                                  'Your pet\'s information',
                                   style: GoogleFonts.poppins(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w600,
@@ -568,7 +566,7 @@ class _RegisterScreenImprovedState extends State<RegisterScreenImproved> {
                                 TextFormField(
                                   controller: _petName,
                                   decoration: InputDecoration(
-                                    labelText: 'Nom de l\'animal',
+                                    labelText: 'Pet Name',
                                     labelStyle: TextStyle(
                                       color: AppTheme.textSecondary,
                                       fontSize: 14,
@@ -612,7 +610,7 @@ class _RegisterScreenImprovedState extends State<RegisterScreenImproved> {
                                       ? null
                                       : _petSpecies.text,
                                   decoration: InputDecoration(
-                                    labelText: 'Espèce',
+                                    labelText: 'Species',
                                     labelStyle: TextStyle(
                                       color: AppTheme.textSecondary,
                                       fontSize: 14,
@@ -646,23 +644,23 @@ class _RegisterScreenImprovedState extends State<RegisterScreenImproved> {
                                   items: const [
                                     DropdownMenuItem(
                                       value: 'chien',
-                                      child: Text('Chien'),
+                                      child: Text('Dog'),
                                     ),
                                     DropdownMenuItem(
                                       value: 'chat',
-                                      child: Text('Chat'),
+                                      child: Text('Cat'),
                                     ),
                                     DropdownMenuItem(
                                       value: 'lapin',
-                                      child: Text('Lapin'),
+                                      child: Text('Rabbit'),
                                     ),
                                     DropdownMenuItem(
                                       value: 'oiseau',
-                                      child: Text('Oiseau'),
+                                      child: Text('Bird'),
                                     ),
                                     DropdownMenuItem(
                                       value: 'rongeur',
-                                      child: Text('Rongeur'),
+                                      child: Text('Rodent'),
                                     ),
                                   ],
                                   onChanged: (value) => setState(
@@ -679,7 +677,7 @@ class _RegisterScreenImprovedState extends State<RegisterScreenImproved> {
                                 TextFormField(
                                   controller: _petBreed,
                                   decoration: InputDecoration(
-                                    labelText: 'Race (optionnel)',
+                                    labelText: 'Breed (optional)',
                                     labelStyle: TextStyle(
                                       color: AppTheme.textSecondary,
                                       fontSize: 14,
@@ -719,7 +717,7 @@ class _RegisterScreenImprovedState extends State<RegisterScreenImproved> {
                                   controller: _petAge,
                                   keyboardType: TextInputType.number,
                                   decoration: InputDecoration(
-                                    labelText: 'Âge (années)',
+                                    labelText: 'Age (years)',
                                     labelStyle: TextStyle(
                                       color: AppTheme.textSecondary,
                                       fontSize: 14,
@@ -767,7 +765,7 @@ class _RegisterScreenImprovedState extends State<RegisterScreenImproved> {
                                   controller: _petWeight,
                                   keyboardType: TextInputType.number,
                                   decoration: InputDecoration(
-                                    labelText: 'Poids (kg)',
+                                    labelText: 'Weight (kg)',
                                     labelStyle: TextStyle(
                                       color: AppTheme.textSecondary,
                                       fontSize: 14,
@@ -841,7 +839,7 @@ class _RegisterScreenImprovedState extends State<RegisterScreenImproved> {
                                       ),
                                     )
                                   : Text(
-                                      'Créer mon compte et mon animal',
+                                      'Create my account and pet',
                                       style: GoogleFonts.poppins(
                                         fontSize: 16,
                                         fontWeight: FontWeight.w600,
@@ -860,7 +858,7 @@ class _RegisterScreenImprovedState extends State<RegisterScreenImproved> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          'Déjà un compte? ',
+                          'Already have an account? ',
                           style: GoogleFonts.poppins(
                             color: Colors.white.withOpacity(0.8),
                             fontSize: 14,
@@ -871,7 +869,7 @@ class _RegisterScreenImprovedState extends State<RegisterScreenImproved> {
                             context.go('/auth/login');
                           },
                           child: Text(
-                            'Se connecter',
+                            'Sign In',
                             style: GoogleFonts.poppins(
                               color: Colors.white,
                               fontSize: 14,

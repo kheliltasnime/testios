@@ -115,7 +115,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 Icon(Icons.login, size: 64, color: Colors.white),
                 const SizedBox(height: 16),
                 Text(
-                  'Veuillez vous connecter',
+                  'Please log in',
                   style: GoogleFonts.poppins(fontSize: 18, color: Colors.white),
                 ),
                 const SizedBox(height: 16),
@@ -125,7 +125,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     backgroundColor: Colors.white,
                     foregroundColor: AppTheme.primaryColor,
                   ),
-                  child: const Text('Se connecter'),
+                  child: const Text('Sign In'),
                 ),
               ],
             ),
@@ -162,7 +162,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Bonjour, ${_userData!['firstName']}!',
+                        'Hello, ${_userData!['firstName']}!',
                         style: GoogleFonts.poppins(
                           fontSize: 28,
                           fontWeight: FontWeight.bold,
@@ -171,7 +171,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        'Vos compagnons vous attendent',
+                        'Your companions are waiting for you',
                         style: GoogleFonts.poppins(
                           fontSize: 16,
                           color: AppTheme.textSecondary,
@@ -229,7 +229,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            'Mes Animaux',
+                            'My Pets',
                             style: GoogleFonts.poppins(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
@@ -237,7 +237,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             ),
                           ),
                           Text(
-                            '${_userPets.length} animal${_userPets.length > 1 ? 'x' : ''}',
+                            '${_userPets.length} pet${_userPets.length > 1 ? 's' : ''}',
                             style: GoogleFonts.poppins(
                               fontSize: 14,
                               color: AppTheme.textSecondary,
@@ -259,7 +259,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               ),
                               const SizedBox(height: 16),
                               Text(
-                                'Aucun animal enregistré',
+                                'No pets registered',
                                 style: GoogleFonts.poppins(
                                   fontSize: 16,
                                   color: AppTheme.textSecondary,
@@ -272,7 +272,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                   backgroundColor: AppTheme.primaryColor,
                                   foregroundColor: Colors.white,
                                 ),
-                                child: const Text('Ajouter un animal'),
+                                child: const Text('Add a pet'),
                               ),
                             ],
                           ),
@@ -352,7 +352,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  pet['name'] ?? 'Nom inconnu',
+                  pet['name'] ?? 'Unknown Name',
                   style: GoogleFonts.poppins(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
@@ -361,7 +361,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  '${pet['species'] ?? 'Espèce inconnue'} • ${pet['age'] ?? 'Âge inconnu'} ans',
+                  '${pet['species'] ?? 'Unknown Species'} • ${pet['age'] ?? 'Unknown Age'} years old',
                   style: GoogleFonts.poppins(
                     fontSize: 14,
                     color: AppTheme.textSecondary,

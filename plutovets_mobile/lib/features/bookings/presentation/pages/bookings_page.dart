@@ -74,7 +74,7 @@ class _BookingsScreenState extends State<BookingsScreen> {
                     ),
                     Expanded(
                       child: Text(
-                        'Mes Réservations',
+                        'My Bookings',
                         style: GoogleFonts.poppins(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
@@ -126,7 +126,7 @@ class _BookingsScreenState extends State<BookingsScreen> {
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
-                                  '${_bookings.length} réservation${_bookings.length > 1 ? 's' : ''}',
+                                  '${_bookings.length} booking${_bookings.length > 1 ? 's' : ''}',
                                   style: GoogleFonts.poppins(
                                     fontSize: 24,
                                     fontWeight: FontWeight.bold,
@@ -175,7 +175,7 @@ class _BookingsScreenState extends State<BookingsScreen> {
                               Icon(Icons.add),
                               const SizedBox(width: 8),
                               Text(
-                                'Nouvelle réservation',
+                                'New Booking',
                                 style: GoogleFonts.poppins(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
@@ -232,7 +232,7 @@ class _BookingsScreenState extends State<BookingsScreen> {
                                     backgroundColor: AppTheme.primaryColor,
                                     foregroundColor: Colors.white,
                                   ),
-                                  child: const Text('Réessayer'),
+                                  child: const Text('Retry'),
                                 ),
                               ],
                             ),
@@ -255,7 +255,7 @@ class _BookingsScreenState extends State<BookingsScreen> {
                                 ),
                                 const SizedBox(height: 16),
                                 Text(
-                                  'Aucune réservation',
+                                  'No bookings',
                                   style: GoogleFonts.poppins(
                                     fontSize: 18,
                                     color: AppTheme.textSecondary,
@@ -264,7 +264,7 @@ class _BookingsScreenState extends State<BookingsScreen> {
                                 ),
                                 const SizedBox(height: 8),
                                 Text(
-                                  'Créez votre première réservation pour commencer',
+                                  'Create your first booking to get started',
                                   style: GoogleFonts.poppins(
                                     fontSize: 14,
                                     color: AppTheme.textSecondary,
@@ -333,7 +333,7 @@ class _BookingsScreenState extends State<BookingsScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        booking.serviceName ?? 'Service inconnu',
+                        booking.serviceName ?? 'Unknown Service',
                         style: GoogleFonts.poppins(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -342,7 +342,7 @@ class _BookingsScreenState extends State<BookingsScreen> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        booking.petName ?? 'Animal inconnu',
+                        booking.petName ?? 'Unknown Pet',
                         style: GoogleFonts.poppins(
                           fontSize: 14,
                           color: AppTheme.textSecondary,
@@ -434,7 +434,7 @@ class _BookingsScreenState extends State<BookingsScreen> {
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            'Voir',
+                            'View',
                             style: GoogleFonts.poppins(
                               fontSize: 14,
                               color: AppTheme.primaryColor,
@@ -463,7 +463,7 @@ class _BookingsScreenState extends State<BookingsScreen> {
                           Icon(Icons.cancel, size: 18, color: AppTheme.error),
                           const SizedBox(width: 8),
                           Text(
-                            'Annuler',
+                            'Cancel',
                             style: GoogleFonts.poppins(
                               fontSize: 14,
                               color: AppTheme.error,
@@ -509,13 +509,13 @@ class _BookingsScreenState extends State<BookingsScreen> {
   String _getStatusText(String status) {
     switch (status.toLowerCase()) {
       case 'confirmed':
-        return 'Confirmée';
+        return 'Confirmed';
       case 'pending':
-        return 'En attente';
+        return 'Pending';
       case 'cancelled':
-        return 'Annulée';
+        return 'Cancelled';
       case 'completed':
-        return 'Terminée';
+        return 'Completed';
       default:
         return status;
     }
