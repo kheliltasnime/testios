@@ -6,6 +6,7 @@ import '../features/auth/presentation/pages/auth_page.dart';
 import '../features/auth/presentation/pages/login_page.dart';
 import '../features/auth/presentation/pages/register_page.dart';
 import '../features/auth/presentation/pages/forgot_password_page.dart';
+import '../features/auth/presentation/pages/google_signup_pet_info_page.dart';
 import '../features/dashboard/presentation/pages/dashboard_page.dart';
 import '../features/pets/presentation/pages/pets_page.dart';
 import '../features/pets/presentation/pages/pet_details_page.dart';
@@ -16,6 +17,7 @@ import '../features/bookings/presentation/pages/create_booking_page.dart';
 import '../features/profile/presentation/pages/profile_page.dart';
 import '../features/notifications/presentation/pages/notifications_page.dart';
 import '../shell/presentation/widgets/main_navigation_shell.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class AppRouter {
   static const String splash = '/splash';
@@ -26,6 +28,7 @@ class AppRouter {
   static const String forgotPassword = '/auth/forgot-password';
 
   static const String dashboard = '/dashboard';
+  static const String googleSignupPetInfo = '/google-signup-pet-info';
   static const String pets = '/pets';
   static const String petDetails = ':petId';
   static const String addPet = 'add';
@@ -76,6 +79,14 @@ class AppRouter {
         path: forgotPassword,
         name: 'forgot-password',
         builder: (context, state) => const ForgotPasswordScreen(),
+      ),
+      GoRoute(
+        path: googleSignupPetInfo,
+        name: 'google-signup-pet-info',
+        builder: (context, state) {
+          final user = state.extra as User;
+          return GoogleSignupPetInfoPage(user: user);
+        },
       ),
       GoRoute(
         path: dashboard,

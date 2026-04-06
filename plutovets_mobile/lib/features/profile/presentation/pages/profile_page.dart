@@ -143,17 +143,58 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _logout() async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.clear();
+    // Show confirmation dialog
+    final shouldLogout = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Logout', style: AppTheme.headlineStyle),
+          content: Text(
+            'Are you sure you want to logout?',
+            style: AppTheme.bodyStyle,
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              style: TextButton.styleFrom(
+                foregroundColor: AppTheme.textSecondary,
+                textStyle: AppTheme.bodyStyle,
+              ),
+              child: Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppTheme.error,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                textStyle: AppTheme.buttonStyle,
+              ),
+              child: Text('Logout'),
+            ),
+          ],
+        );
+      },
+    );
 
-      if (mounted) {
-        context.go('/auth/login');
-      }
-    } catch (e) {
-      print('Error during logout: $e');
-      if (mounted) {
-        context.go('/auth/login');
+    if (shouldLogout == true) {
+      try {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.clear();
+
+        if (mounted) {
+          context.go('/auth/login');
+        }
+      } catch (e) {
+        print('Error during logout: $e');
+        if (mounted) {
+          context.go('/auth/login');
+        }
       }
     }
   }
@@ -510,30 +551,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       // Logout Button
                       SizedBox(
                         width: double.infinity,
-                        height: 50,
-                        child: ElevatedButton(
+                        height: 56,
+                        child: ElevatedButton.icon(
                           onPressed: _logout,
+                          icon: Icon(
+                            Icons.logout_rounded,
+                            size: 20,
+                            color: Colors.white,
+                          ),
+                          label: Text('Logout', style: AppTheme.buttonStyle),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppTheme.error,
                             foregroundColor: Colors.white,
-                            elevation: 0,
+                            elevation: 2,
+                            shadowColor: AppTheme.error.withOpacity(0.3),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(16),
                             ),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.logout),
-                              const SizedBox(width: 8),
-                              Text(
-                                'Sign Out',
-                                style: GoogleFonts.poppins(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ],
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 24,
+                              vertical: 16,
+                            ),
                           ),
                         ),
                       ),

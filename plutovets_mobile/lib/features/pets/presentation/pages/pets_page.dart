@@ -7,6 +7,7 @@ import 'dart:convert';
 import '../../../../core/router.dart';
 import '../../../../core/theme.dart';
 import '../../../../core/constants.dart';
+import '../../../../services/pet_service.dart';
 
 class PetsScreen extends StatefulWidget {
   const PetsScreen({super.key});
@@ -27,41 +28,49 @@ class _PetsScreenState extends State<PetsScreen> {
   }
 
   Future<void> _loadUserPets() async {
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
+
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final token = prefs.getString(AppConstants.storageTokenKey);
+      final petService = PetService(baseUrl: AppConstants.baseUrl);
 
-      if (token == null) {
-        setState(() {
-          _error = 'Non connecté';
-          _isLoading = false;
-        });
-        return;
+      // First try to get pets from backend
+      final backendPets = await petService.getUserPets();
+
+      // Also check for local pets (from Google signup)
+      final localPet = await petService.getLocalPet();
+
+      List<Map<String, dynamic>> allPets = [];
+
+      // Add backend pets
+      allPets.addAll(backendPets);
+
+      // Add local pet if not already in backend pets
+      if (localPet != null) {
+        final existsInBackend = backendPets.any(
+          (pet) =>
+              pet['id'] == localPet['id'] ||
+              (pet['name'] == localPet['name'] &&
+                  pet['ownerId'] == localPet['ownerId']),
+        );
+
+        if (!existsInBackend) {
+          allPets.add(localPet);
+
+          // Try to sync local pet with backend
+          await petService.syncLocalPet();
+        }
       }
 
-      final response = await http.get(
-        Uri.parse('${AppConstants.baseUrl}${ApiEndpoints.pets}'),
-        headers: {
-          'Authorization': 'Bearer $token',
-          'Content-Type': 'application/json',
-        },
-      );
-
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        setState(() {
-          _userPets = List<Map<String, dynamic>>.from(data['pets']);
-          _isLoading = false;
-        });
-      } else {
-        setState(() {
-          _error = 'Erreur de chargement';
-          _isLoading = false;
-        });
-      }
+      setState(() {
+        _userPets = allPets;
+        _isLoading = false;
+      });
     } catch (e) {
       setState(() {
-        _error = 'Erreur réseau';
+        _error = 'Erreur de chargement: ${e.toString()}';
         _isLoading = false;
       });
     }

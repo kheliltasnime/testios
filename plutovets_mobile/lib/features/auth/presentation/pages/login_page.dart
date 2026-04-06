@@ -90,35 +90,30 @@ class _SimpleLoginScreenState extends State<SimpleLoginScreen> {
       final user = await _firebaseAuthService.signInWithGoogle();
 
       if (user != null) {
-        // Firebase authentication successful
-        final prefs = await SharedPreferences.getInstance();
-
-        // Save token like classic login
-        await prefs.setString(
-          AppConstants.storageTokenKey,
-          'firebase_token_${user.uid}',
+        // Check if email exists in backend (not just local storage)
+        final profileService = ProfileService(baseUrl: AppConstants.baseUrl);
+        final emailExists = await profileService.checkEmailExists(
+          user.email ?? '',
         );
 
-        // Sync Google profile with backend
-        final profileResult = await _profileService.syncGoogleProfile(
-          uid: user.uid,
-          email: user.email ?? '',
-          displayName: user.displayName ?? '',
-          photoURL: user.photoURL,
-        );
+        if (emailExists) {
+          // Existing user - sync profile and go to dashboard
+          await _profileService.syncGoogleProfile(
+            uid: user.uid,
+            email: user.email ?? '',
+            displayName: user.displayName ?? '',
+            photoURL: user.photoURL,
+          );
 
-        if (profileResult['success']) {
-          setState(() {
-            _error = 'Profile synchronized successfully!';
-          });
+          if (mounted) {
+            context.go(AppRouter.dashboard);
+          }
         } else {
-          setState(() {
-            _error = profileResult['message'] ?? 'Profile synced locally';
-          });
+          // New user - redirect to pet info page
+          if (mounted) {
+            context.go(AppRouter.googleSignupPetInfo, extra: user);
+          }
         }
-
-        // Navigate to dashboard like classic login
-        context.go(AppRouter.dashboard);
       } else {
         // Firebase failed - use mock authentication for testing
         final prefs = await SharedPreferences.getInstance();
@@ -150,6 +145,51 @@ class _SimpleLoginScreenState extends State<SimpleLoginScreen> {
     } catch (e) {
       setState(() {
         _error = 'Google sign-in failed: ${e.toString()}';
+      });
+    }
+
+    setState(() {
+      _isGoogleLoading = false;
+    });
+  }
+
+  Future<void> _handleGoogleSignUp() async {
+    setState(() {
+      _isGoogleLoading = true;
+      _error = null;
+    });
+
+    try {
+      final user = await _firebaseAuthService.signInWithGoogle();
+
+      if (user != null) {
+        // Check if email already exists before redirecting
+        final profileService = ProfileService(baseUrl: AppConstants.baseUrl);
+        final emailExists = await profileService.checkEmailExists(
+          user.email ?? '',
+        );
+
+        if (emailExists) {
+          setState(() {
+            _error =
+                'This email is already used. Please sign in with "Sign in with Google".';
+          });
+          // Stay on login page - don't redirect
+          // Just show the error message and let user try "Sign in with Google"
+        } else {
+          // New user - redirect to pet info page for signup
+          if (mounted) {
+            context.go(AppRouter.googleSignupPetInfo, extra: user);
+          }
+        }
+      } else {
+        setState(() {
+          _error = 'Google sign-up failed - please try again';
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _error = 'Google sign-up failed: ${e.toString()}';
       });
     }
 
@@ -282,7 +322,7 @@ class _SimpleLoginScreenState extends State<SimpleLoginScreen> {
                       ),
                       child: Column(
                         children: [
-                          // Champ Email
+                          // Email field
                           TextFormField(
                             controller: _email,
                             decoration: InputDecoration(
@@ -319,10 +359,10 @@ class _SimpleLoginScreenState extends State<SimpleLoginScreen> {
                             keyboardType: TextInputType.emailAddress,
                             validator: (value) {
                               if (value == null || value.trim().isEmpty) {
-                                return 'Veuillez entrer votre email';
+                                return 'Please enter your email';
                               }
                               if (!value.contains('@')) {
-                                return 'Veuillez entrer un email valide';
+                                return 'Please enter a valid email';
                               }
                               return null;
                             },
@@ -330,7 +370,7 @@ class _SimpleLoginScreenState extends State<SimpleLoginScreen> {
 
                           const SizedBox(height: 20),
 
-                          // Champ Mot de passe
+                          // Password field
                           TextFormField(
                             controller: _password,
                             obscureText: true,
@@ -367,10 +407,10 @@ class _SimpleLoginScreenState extends State<SimpleLoginScreen> {
                             ),
                             validator: (value) {
                               if (value == null || value.trim().isEmpty) {
-                                return 'Veuillez entrer votre mot de passe';
+                                return 'Please enter your password';
                               }
                               if (value.length < 6) {
-                                return 'Le mot de passe doit contenir au moins 6 caractères';
+                                return 'Password must be at least 6 characters';
                               }
                               return null;
                             },
@@ -378,12 +418,12 @@ class _SimpleLoginScreenState extends State<SimpleLoginScreen> {
 
                           const SizedBox(height: 12),
 
-                          // Mot de passe oublié
+                          // Forgot password
                           Align(
                             alignment: Alignment.centerRight,
                             child: TextButton(
                               onPressed: () {
-                                // TODO: Implémenter mot de passe oublié
+                                // TODO: Implement forgot password
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
                                     content: Text('Feature coming soon!'),
@@ -403,7 +443,7 @@ class _SimpleLoginScreenState extends State<SimpleLoginScreen> {
 
                           const SizedBox(height: 30),
 
-                          // Bouton de connexion
+                          // Login button
                           SizedBox(
                             width: double.infinity,
                             height: 50,
@@ -440,7 +480,7 @@ class _SimpleLoginScreenState extends State<SimpleLoginScreen> {
                             ),
                           ),
 
-                          // Message d'erreur
+                          // Error message
                           if (_error != null) ...[
                             const SizedBox(height: 16),
                             Container(
@@ -485,41 +525,92 @@ class _SimpleLoginScreenState extends State<SimpleLoginScreen> {
                     const SizedBox(height: 20),
 
                     // Google Sign-In Button
-                    Container(
+                    SizedBox(
                       width: double.infinity,
-                      height: 50,
-                      child: ElevatedButton.icon(
+                      height: 56,
+                      child: OutlinedButton.icon(
                         onPressed: _isGoogleLoading
                             ? null
                             : _handleGoogleSignIn,
                         icon: _isGoogleLoading
-                            ? SizedBox(
+                            ? const SizedBox(
                                 width: 20,
                                 height: 20,
                                 child: CircularProgressIndicator(
+                                  color: AppTheme.primaryColor,
                                   strokeWidth: 2,
-                                  valueColor: AlwaysStoppedAnimation<Color>(
-                                    Colors.white,
-                                  ),
                                 ),
                               )
-                            : Icon(Icons.g_mobiledata, color: Colors.white),
+                            : Icon(
+                                Icons.login_rounded,
+                                size: 20,
+                                color: AppTheme.primaryColor,
+                              ),
                         label: Text(
-                          _isGoogleLoading
-                              ? 'Signing in...'
-                              : 'Sign in with Google',
-                          style: GoogleFonts.poppins(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
+                          'Sign in with Google',
+                          style: AppTheme.buttonStyle.copyWith(
+                            color: AppTheme.primaryColor,
                           ),
                         ),
+                        style: OutlinedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          foregroundColor: AppTheme.primaryColor,
+                          side: BorderSide(
+                            color: AppTheme.primaryColor,
+                            width: 2,
+                          ),
+                          elevation: 2,
+                          shadowColor: AppTheme.primaryColor.withOpacity(0.2),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 24,
+                            vertical: 16,
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    // Google Sign-Up Button
+                    SizedBox(
+                      width: double.infinity,
+                      height: 56,
+                      child: ElevatedButton.icon(
+                        onPressed: _isGoogleLoading
+                            ? null
+                            : _handleGoogleSignUp,
+                        icon: _isGoogleLoading
+                            ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : Icon(
+                                Icons.person_add_rounded,
+                                size: 20,
+                                color: Colors.white,
+                              ),
+                        label: Text(
+                          'Sign up with Google',
+                          style: AppTheme.buttonStyle,
+                        ),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF4285F4),
+                          backgroundColor: AppTheme.primaryColor,
                           foregroundColor: Colors.white,
                           elevation: 2,
+                          shadowColor: AppTheme.primaryColor.withOpacity(0.3),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 24,
+                            vertical: 16,
                           ),
                         ),
                       ),
@@ -527,12 +618,12 @@ class _SimpleLoginScreenState extends State<SimpleLoginScreen> {
 
                     const SizedBox(height: 30),
 
-                    // Lien d'inscription
+                    // Sign up link
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          'Don\'t have an account? ',
+                          "Don't have an account? ",
                           style: GoogleFonts.poppins(
                             color: Colors.white.withOpacity(0.8),
                             fontSize: 14,
