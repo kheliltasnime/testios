@@ -120,6 +120,7 @@ class _AddPetScreenState extends State<AddPetScreen> {
     final isEdit = widget.petId != null;
 
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text(
           isEdit ? 'Edit Pet' : 'Add Pet',
@@ -151,11 +152,25 @@ class _AddPetScreenState extends State<AddPetScreen> {
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(20),
+                      border: Border.all(
+                        color: Color.fromRGBO(
+                          255,
+                          173,
+                          207,
+                          1,
+                        ).withOpacity(0.2),
+                        width: 1,
+                      ),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          blurRadius: 30,
-                          offset: const Offset(0, 15),
+                          color: Color.fromRGBO(
+                            255,
+                            173,
+                            207,
+                            1,
+                          ).withOpacity(0.1),
+                          blurRadius: 15,
+                          offset: const Offset(0, 5),
                         ),
                       ],
                     ),
@@ -167,12 +182,12 @@ class _AddPetScreenState extends State<AddPetScreen> {
                           decoration: InputDecoration(
                             labelText: 'Pet Name',
                             labelStyle: TextStyle(
-                              color: AppTheme.textSecondary,
+                              color: Color.fromRGBO(4, 0, 56, 1),
                               fontSize: 14,
                             ),
                             prefixIcon: Icon(
                               Icons.pets,
-                              color: AppTheme.primaryColor,
+                              color: Color.fromRGBO(255, 173, 207, 1),
                             ),
                             filled: true,
                             fillColor: AppTheme.inputBackground,
@@ -183,14 +198,19 @@ class _AddPetScreenState extends State<AddPetScreen> {
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
                               borderSide: BorderSide(
-                                color: AppTheme.primaryColor.withOpacity(0.3),
+                                color: Color.fromRGBO(
+                                  255,
+                                  173,
+                                  207,
+                                  1,
+                                ).withOpacity(0.3),
                                 width: 1,
                               ),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
                               borderSide: BorderSide(
-                                color: AppTheme.primaryColor,
+                                color: Color.fromRGBO(255, 173, 207, 1),
                                 width: 2,
                               ),
                             ),
@@ -211,12 +231,12 @@ class _AddPetScreenState extends State<AddPetScreen> {
                           decoration: InputDecoration(
                             labelText: 'Species',
                             labelStyle: TextStyle(
-                              color: AppTheme.textSecondary,
+                              color: Color.fromRGBO(4, 0, 56, 1),
                               fontSize: 14,
                             ),
                             prefixIcon: Icon(
                               Icons.category,
-                              color: AppTheme.primaryColor,
+                              color: Color.fromRGBO(255, 173, 207, 1),
                             ),
                             filled: true,
                             fillColor: AppTheme.inputBackground,
@@ -227,14 +247,19 @@ class _AddPetScreenState extends State<AddPetScreen> {
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
                               borderSide: BorderSide(
-                                color: AppTheme.primaryColor.withOpacity(0.3),
+                                color: Color.fromRGBO(
+                                  255,
+                                  173,
+                                  207,
+                                  1,
+                                ).withOpacity(0.3),
                                 width: 1,
                               ),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
                               borderSide: BorderSide(
-                                color: AppTheme.primaryColor,
+                                color: Color.fromRGBO(255, 173, 207, 1),
                                 width: 2,
                               ),
                             ),
@@ -266,12 +291,12 @@ class _AddPetScreenState extends State<AddPetScreen> {
                           decoration: InputDecoration(
                             labelText: 'Age',
                             labelStyle: TextStyle(
-                              color: AppTheme.textSecondary,
+                              color: Color.fromRGBO(4, 0, 56, 1),
                               fontSize: 14,
                             ),
                             prefixIcon: Icon(
                               Icons.cake,
-                              color: AppTheme.primaryColor,
+                              color: Color.fromRGBO(255, 173, 207, 1),
                             ),
                             filled: true,
                             fillColor: AppTheme.inputBackground,
@@ -282,14 +307,19 @@ class _AddPetScreenState extends State<AddPetScreen> {
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
                               borderSide: BorderSide(
-                                color: AppTheme.primaryColor.withOpacity(0.3),
+                                color: Color.fromRGBO(
+                                  255,
+                                  173,
+                                  207,
+                                  1,
+                                ).withOpacity(0.3),
                                 width: 1,
                               ),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
                               borderSide: BorderSide(
-                                color: AppTheme.primaryColor,
+                                color: Color.fromRGBO(255, 173, 207, 1),
                                 width: 2,
                               ),
                             ),
@@ -310,12 +340,12 @@ class _AddPetScreenState extends State<AddPetScreen> {
                           decoration: InputDecoration(
                             labelText: 'Breed',
                             labelStyle: TextStyle(
-                              color: AppTheme.textSecondary,
+                              color: Color.fromRGBO(4, 0, 56, 1),
                               fontSize: 14,
                             ),
                             prefixIcon: Icon(
                               Icons.pets_outlined,
-                              color: AppTheme.primaryColor,
+                              color: Color.fromRGBO(255, 173, 207, 1),
                             ),
                             filled: true,
                             fillColor: AppTheme.inputBackground,
@@ -326,14 +356,19 @@ class _AddPetScreenState extends State<AddPetScreen> {
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
                               borderSide: BorderSide(
-                                color: AppTheme.primaryColor.withOpacity(0.3),
+                                color: Color.fromRGBO(
+                                  255,
+                                  173,
+                                  207,
+                                  1,
+                                ).withOpacity(0.3),
                                 width: 1,
                               ),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
                               borderSide: BorderSide(
-                                color: AppTheme.primaryColor,
+                                color: Color.fromRGBO(255, 173, 207, 1),
                                 width: 2,
                               ),
                             ),
@@ -391,12 +426,12 @@ class _AddPetScreenState extends State<AddPetScreen> {
                             decoration: InputDecoration(
                               labelText: 'Insurance Number',
                               labelStyle: TextStyle(
-                                color: AppTheme.textSecondary,
+                                color: Color.fromRGBO(4, 0, 56, 1),
                                 fontSize: 14,
                               ),
                               prefixIcon: Icon(
                                 Icons.health_and_safety,
-                                color: AppTheme.primaryColor,
+                                color: Color.fromRGBO(255, 173, 207, 1),
                               ),
                               filled: true,
                               fillColor: AppTheme.inputBackground,
@@ -407,14 +442,19 @@ class _AddPetScreenState extends State<AddPetScreen> {
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
                                 borderSide: BorderSide(
-                                  color: AppTheme.primaryColor.withOpacity(0.3),
+                                  color: Color.fromRGBO(
+                                    255,
+                                    173,
+                                    207,
+                                    1,
+                                  ).withOpacity(0.3),
                                   width: 1,
                                 ),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
                                 borderSide: BorderSide(
-                                  color: AppTheme.primaryColor,
+                                  color: Color.fromRGBO(255, 173, 207, 1),
                                   width: 2,
                                 ),
                               ),
@@ -457,7 +497,7 @@ class _AddPetScreenState extends State<AddPetScreen> {
                           child: ElevatedButton(
                             onPressed: _isLoading ? null : _handleSubmit,
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: AppTheme.primaryColor,
+                              backgroundColor: Color.fromRGBO(255, 173, 207, 1),
                               foregroundColor: Colors.white,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),

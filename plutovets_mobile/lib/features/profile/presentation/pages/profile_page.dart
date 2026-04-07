@@ -203,7 +203,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: const BoxDecoration(gradient: AppTheme.loginGradient),
+        decoration: BoxDecoration(color: Colors.white),
         child: SafeArea(
           child: Column(
             children: [

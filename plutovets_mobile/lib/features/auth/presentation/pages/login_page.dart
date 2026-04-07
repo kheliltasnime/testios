@@ -236,7 +236,7 @@ class _SimpleLoginScreenState extends State<SimpleLoginScreen> {
                                 child: Icon(
                                   Icons.pets,
                                   size: 50,
-                                  color: AppTheme.primaryColor,
+                                  color: Color.fromRGBO(255, 173, 207, 1),
                                 ),
                               ),
                               // Icônes stylisées pour représenter chiens et chats
@@ -264,7 +264,7 @@ class _SimpleLoginScreenState extends State<SimpleLoginScreen> {
                                   width: 20,
                                   height: 20,
                                   decoration: BoxDecoration(
-                                    color: AppTheme.primaryColor,
+                                    color: Color.fromRGBO(255, 173, 207, 1),
                                     borderRadius: BorderRadius.circular(10),
                                   ),
                                   child: Icon(
@@ -333,7 +333,7 @@ class _SimpleLoginScreenState extends State<SimpleLoginScreen> {
                               ),
                               prefixIcon: Icon(
                                 Icons.email_outlined,
-                                color: AppTheme.primaryColor,
+                                color: Color.fromRGBO(255, 173, 207, 1),
                               ),
                               filled: true,
                               fillColor: AppTheme.inputBackground,
@@ -344,14 +344,19 @@ class _SimpleLoginScreenState extends State<SimpleLoginScreen> {
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
                                 borderSide: BorderSide(
-                                  color: AppTheme.primaryColor.withOpacity(0.3),
+                                  color: Color.fromRGBO(
+                                    255,
+                                    173,
+                                    207,
+                                    1,
+                                  ).withOpacity(0.3),
                                   width: 1,
                                 ),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
                                 borderSide: BorderSide(
-                                  color: AppTheme.primaryColor,
+                                  color: Color.fromRGBO(255, 173, 207, 1),
                                   width: 2,
                                 ),
                               ),
@@ -382,7 +387,7 @@ class _SimpleLoginScreenState extends State<SimpleLoginScreen> {
                               ),
                               prefixIcon: Icon(
                                 Icons.lock_outline,
-                                color: AppTheme.primaryColor,
+                                color: Color.fromRGBO(255, 173, 207, 1),
                               ),
                               filled: true,
                               fillColor: AppTheme.inputBackground,
@@ -393,14 +398,19 @@ class _SimpleLoginScreenState extends State<SimpleLoginScreen> {
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
                                 borderSide: BorderSide(
-                                  color: AppTheme.primaryColor.withOpacity(0.3),
+                                  color: Color.fromRGBO(
+                                    255,
+                                    173,
+                                    207,
+                                    1,
+                                  ).withOpacity(0.3),
                                   width: 1,
                                 ),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
                                 borderSide: BorderSide(
-                                  color: AppTheme.primaryColor,
+                                  color: Color.fromRGBO(255, 173, 207, 1),
                                   width: 2,
                                 ),
                               ),
@@ -433,7 +443,7 @@ class _SimpleLoginScreenState extends State<SimpleLoginScreen> {
                               child: Text(
                                 'Forgot password?',
                                 style: GoogleFonts.poppins(
-                                  color: AppTheme.primaryColor,
+                                  color: Color.fromRGBO(255, 173, 207, 1),
                                   fontSize: 14,
                                   fontWeight: FontWeight.w500,
                                 ),
@@ -537,26 +547,26 @@ class _SimpleLoginScreenState extends State<SimpleLoginScreen> {
                                 width: 20,
                                 height: 20,
                                 child: CircularProgressIndicator(
-                                  color: AppTheme.primaryColor,
+                                  color: Color.fromRGBO(255, 173, 207, 1),
                                   strokeWidth: 2,
                                 ),
                               )
                             : Icon(
                                 Icons.login_rounded,
                                 size: 20,
-                                color: AppTheme.primaryColor,
+                                color: Color.fromRGBO(255, 173, 207, 1),
                               ),
                         label: Text(
                           'Sign in with Google',
                           style: AppTheme.buttonStyle.copyWith(
-                            color: AppTheme.primaryColor,
+                            color: Color.fromRGBO(255, 173, 207, 1),
                           ),
                         ),
                         style: OutlinedButton.styleFrom(
                           backgroundColor: Colors.white,
                           foregroundColor: AppTheme.primaryColor,
                           side: BorderSide(
-                            color: AppTheme.primaryColor,
+                            color: Color.fromRGBO(255, 173, 207, 1),
                             width: 2,
                           ),
                           elevation: 2,

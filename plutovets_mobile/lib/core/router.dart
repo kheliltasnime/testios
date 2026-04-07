@@ -15,6 +15,7 @@ import '../features/bookings/presentation/pages/bookings_page.dart';
 import '../features/bookings/presentation/pages/booking_details_page.dart';
 import '../features/bookings/presentation/pages/create_booking_page.dart';
 import '../features/profile/presentation/pages/profile_page.dart';
+import '../features/services/presentation/pages/services_page.dart';
 import '../features/notifications/presentation/pages/notifications_page.dart';
 import '../shell/presentation/widgets/main_navigation_shell.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -33,6 +34,8 @@ class AppRouter {
   static const String petDetails = ':petId';
   static const String addPet = 'add';
   static const String editPet = ':petId/edit';
+
+  static const String services = '/services';
 
   static const String bookings = '/bookings';
   static const String bookingDetails = ':bookingId';
@@ -159,6 +162,12 @@ class AppRouter {
             },
           ),
         ],
+      ),
+      GoRoute(
+        path: services,
+        name: 'services',
+        builder: (context, state) =>
+            const MainNavigation(child: ServicesPage()),
       ),
       GoRoute(
         path: profile,
